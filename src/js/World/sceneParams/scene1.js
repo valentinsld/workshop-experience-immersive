@@ -5,28 +5,32 @@ export default {
       name: 'Square',
       geometry: {
         type: 'BoxGeometry',
-        params: {},
+        // params: {},
       },
+      instances: [
+        {
+          texture: {
+            type: 'MeshNormalMaterial',
+            // params: {},
+          },
+          // position: {}
+        },
+      ],
+    },
+    // imported mesh
+    {
+      name: 'Suzanne2',
+      animated: false,
+      modelName: 'suzanne',
       instances: [
         {
           texture: {
             type: 'MeshNormalMaterial',
             params: {},
           },
+          position: {}
         },
-        { position: {} },
       ],
-    },
-    // imported mesh
-    {
-      name: 'Suzanne',
-      animated: false,
-      modelName: 'suzanne',
-      texture: {
-        type: 'MeshNormalMaterial',
-        params: {},
-      },
-      positions: [{}],
     },
   ],
   steps: [

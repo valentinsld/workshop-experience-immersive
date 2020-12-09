@@ -3,6 +3,7 @@ import { AxesHelper, Object3D } from 'three'
 import AmbientLightSource from './AmbientLight'
 import PointLightSource from './PointLight'
 import Suzanne from './Suzanne'
+import SceneManager from "./SceneManager";
 
 export default class World {
   constructor(options) {
@@ -23,7 +24,7 @@ export default class World {
 
     // manage state to know which scene and text to display
     this.state = {
-      sceneIndex: 0,
+      sceneIndex: 1,
       subSceneIndex: 0,
     }
 
@@ -32,7 +33,8 @@ export default class World {
   init() {
     this.setAmbientLight()
     this.setPointLight()
-    this.setSuzanne()
+    // this.setSuzanne()
+    this.setScene()
   }
   setLoader() {
     this.loadDiv = document.querySelector('.loadScreen')
@@ -79,5 +81,12 @@ export default class World {
       assets: this.assets,
     })
     this.container.add(this.suzanne.container)
+  }
+  setScene() {
+    this.sceneManager = new SceneManager({
+      assets: this.assets,
+      sceneState: this.state
+    })
+    this.container.add(this.sceneManager.container)
   }
 }
