@@ -2,6 +2,8 @@ import { Object3D } from 'three'
 
 export default class Scene1 {
     constructor({ assets }) {
+        this.assets = assets
+
         this.container = new Object3D()
         this.setupScene()
         App.scene.add(this.container)
@@ -13,6 +15,7 @@ export default class Scene1 {
     }
 
     destruct() {
+        // TODO: dispose geometries and textures of the scene
         App.scene.clear()
     }
 }

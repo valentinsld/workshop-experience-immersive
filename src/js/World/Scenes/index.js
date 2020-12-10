@@ -9,6 +9,13 @@ export default class SceneManager {
 
         this.params = params
 
+        if (params.options.debug) {
+            window.addEventListener('keydown', e => {
+                if (e.key === '-') this.previous()
+                if (e.key === '+') this.next()
+            })
+        }
+
         this.state = {
             currentSceneIndex: 0,
             currentScene: new this.scenes[0](this.params),

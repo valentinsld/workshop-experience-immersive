@@ -51,7 +51,10 @@ export default class World {
   }
   setScenes() {
     this.sceneManager = new SceneManager({
-      assets: this.assets
+      assets: this.assets,
+      options: {
+        debug: this.debug
+      }
     })
   }
 }
