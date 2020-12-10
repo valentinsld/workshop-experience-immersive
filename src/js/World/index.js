@@ -1,9 +1,5 @@
 import { AxesHelper, Object3D } from 'three'
-
-import AmbientLightSource from './AmbientLight'
-import PointLightSource from './PointLight'
-import Suzanne from './Suzanne'
-
+import SceneManager from './Scenes'
 export default class World {
   constructor(options) {
     // Set options
@@ -24,9 +20,7 @@ export default class World {
     this.setLoader()
   }
   init() {
-    this.setAmbientLight()
-    this.setPointLight()
-    this.setSuzanne()
+    this.setScenes()
   }
   setLoader() {
     this.loadDiv = document.querySelector('.loadScreen')
@@ -55,23 +49,9 @@ export default class World {
       })
     }
   }
-  setAmbientLight() {
-    this.ambientlight = new AmbientLightSource({
-      debug: this.debugFolder,
+  setScenes() {
+    this.sceneManager = new SceneManager({
+      assets: this.assets
     })
-    this.container.add(this.ambientlight.container)
-  }
-  setPointLight() {
-    this.light = new PointLightSource({
-      debug: this.debugFolder,
-    })
-    this.container.add(this.light.container)
-  }
-  setSuzanne() {
-    this.suzanne = new Suzanne({
-      time: this.time,
-      assets: this.assets,
-    })
-    this.container.add(this.suzanne.container)
   }
 }
