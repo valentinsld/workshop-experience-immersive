@@ -54,6 +54,8 @@
   },
   "homepage": "https://github.com/Lissandre/three_template#readme",
   "dependencies": {
-    "gsap": "file:gsap-bonus.tgz"
+    "gsap": "file:gsap-bonus.tgz",
+    "postprocessing": "^6.18.0",
+    "three.ssaopass": "^1.0.1"
   }
 }
