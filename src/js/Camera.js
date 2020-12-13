@@ -1,4 +1,4 @@
-import { Object3D, PerspectiveCamera, Box3, Group, Euler } from 'three'
+import { Object3D, PerspectiveCamera, Euler } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import gsap from 'gsap'
 
@@ -15,7 +15,6 @@ export default class Camera {
     this.container.name = 'Camera'
 
     // inspired from PointerLockControls
-
     this.euler = new Euler(0, 0, 0, 'YXZ')
     this.eulerStack = { x: 0, y: 0 }
     this.baseCursorPosition = {x: 0, y: 0}
@@ -41,7 +40,7 @@ export default class Camera {
     })
     
     this.time.on('tick', () => {
-      this.camera?.quaternion.setFromEuler( this.euler )
+      if (!this.orbitControls.enabled) this.camera?.quaternion.setFromEuler( this.euler )
     })
 
     this.setCamera()

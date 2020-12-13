@@ -1,6 +1,8 @@
-import { Object3D, BoxGeometry, MeshNormalMaterial, Mesh, Vector2, Vector3 } from 'three'
+import { Object3D, Mesh, Vector3, Euler, DoubleSide, Raycaster, ShaderMaterial, MeshBasicMaterial } from 'three'
 import AmbientLightSource from '../AmbientLight'
 import PointLightSource from '../PointLight'
+import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
+
 
 import gsap from 'gsap'
 import { CustomEase } from 'gsap/CustomEase'
@@ -39,6 +41,19 @@ export default class Scene1 {
         this.camera = App.camera.camera
         this.cameraContainer = App.camera.container
         this.camera.position.z = 20
+
+        // raycast
+        // TODO: make this optional so that it is not set on all scenes
+        const camera = this.cameraInstance = App.camera
+        camera.raycaster = new Raycaster(
+          camera.camera.position,
+          new Vector3(0, -1, 0)
+        )
+        camera.time.on('tick', () => camera.raycaster.set(
+          camera.camera.position,
+          new Vector3(0, -1, 0)
+        ))
+        window.addEventListener('keypress', e => console.log(camera.raycaster.intersectObject(this.stairs.getObjectByName('Escalier'), true)))
 
         setTimeout(
             () => {this.climbStairs(8)},
@@ -81,9 +96,8 @@ export default class Scene1 {
           z: 0.01 * mult,
           ease: "linear",
           duration: 1,
+          onComplete: () => this.createFootstep(i)
         }, "-=1")
-
-        this.createFootstep()
       }
 
       console.log('played')
@@ -99,7 +113,28 @@ export default class Scene1 {
 
     }
 
-    createFootstep() {}
+    createFootstep(stepIndex) {
+      console.log(require('@shaders/footstep.vert').default);
+      const stairs = this.stairs.getObjectByName('Escalier')
+      const position = this.cameraInstance.raycaster.intersectObject(stairs, true)[0].point
+      const orientation = new Euler(0, Math.PI/2, 0)
+      const size = new Vector3(2, 1.2, 2)
+      const geometry = new DecalGeometry( stairs, position, orientation , size );
+      const material = new ShaderMaterial( { 
+        side: DoubleSide,
+        transparent: true,
+        vertexShader: require('@shaders/footstep.vert').default,
+        fragmentShader: require('@shaders/footstep.frag').default
+      } );
+      // const material = new MeshBasicMaterial( { color: 0x00ff00, side: DoubleSide } )
+      const mesh = new Mesh( geometry, material );
+      mesh.position.y += 0.01
+      
+      if(stepIndex % 2 === 0) mesh.position.x += 1
+      else mesh.position.x -= 1
+
+      this.container.add( mesh )
+    }
 
     destruct() {
         // TODO: dispose geometries and textures of the scene
