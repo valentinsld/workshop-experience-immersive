@@ -1,12 +1,15 @@
-import { Object3D, BoxGeometry, MeshNormalMaterial, Mesh } from 'three'
+import { Object3D, BoxGeometry, MeshNormalMaterial, Mesh, Vector2, Vector3 } from 'three'
+import AmbientLightSource from '../AmbientLight'
+import PointLightSource from '../PointLight'
 
 import gsap from 'gsap'
 import { CustomEase } from 'gsap/CustomEase'
 gsap.registerPlugin(CustomEase)
 
 export default class Scene1 {
-    constructor({ assets }) {
+    constructor({ assets, time }) {
         this.assets = assets
+        this.time = time
 
         this.container = new Object3D()
         this.setupScene()
@@ -14,30 +17,36 @@ export default class Scene1 {
     }
 
     setupScene() {
-        // this.suzanne = this.assets.models.suzanne.scene
-        // this.container.add(this.suzanne)
+        this.stairs = this.assets.models.Ernest_M2.scene
+        this.stairs.scale.set(0.06, 0.06, 0.06)
+        this.stairs.position.x = -60
+        this.stairs.position.z = 36
+        this.stairs.position.y = -4
+        this.stairs.rotation.y = Math.PI/2
+        this.container.add(this.stairs)
 
-      // create
-      for(let i = -5 ; i < 5; i++) {
-          const geometry = new BoxGeometry( 20, 2, 2 );
-          const material = new MeshNormalMaterial();
-          const cube = new Mesh( geometry, material );
-          cube.position.y = i * 2
-          cube.position.z = -i * 2
-          this.container.add( cube );
-      }
+        this.ambientlight = new AmbientLightSource({
+            debug: this.debugFolder,
+        })
+        this.container.add(this.ambientlight.container)
 
-    // init camera
-    this.camera = App.camera.camera
-    this.camera.position.y = -4
-    this.camera.position.z = 20
+        this.light = new PointLightSource({
+            debug: this.debugFolder,
+        })
+        this.container.add(this.light.container)
 
-    setTimeout(
-      () => {this.climbStairs(8)},
-     1000)
+        // init camera
+        this.camera = App.camera.camera
+        this.cameraContainer = App.camera.container
+        this.camera.position.z = 20
+
+        setTimeout(
+            () => {this.climbStairs(8)},
+        1000)
   }
 
   climbStairs(nbStairs) {
+      console.log('hey');
     const EaseY = CustomEase.create(
       'custom',
       'M0,0 C0.134,0.022 0.524,1.027 0.856,1.028 0.92,1.028 0.96,1.01 1,1 '
@@ -66,7 +75,7 @@ export default class Scene1 {
         ease: "linear",
         duration: 1,
       }, "-=1")
-      .to(this.camera.rotation, {
+      .to(this.cameraContainer, {
         x: -0.02 * mult,
         y: 0.01,
         z: 0.01 * mult,
