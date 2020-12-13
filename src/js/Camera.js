@@ -18,11 +18,18 @@ export default class Camera {
 
     this.euler = new Euler(0, 0, 0, 'YXZ')
     this.eulerStack = { x: 0, y: 0 }
+    this.baseCursorPosition = {x: 0, y: 0}
     this.euler.setFromQuaternion( this.container.quaternion )
+
+    // TODO: complete calibration
+    window.addEventListener('mousemove', e => {
+      this.baseCursorPosition.x = e.clientX
+      this.baseCursorPosition.y = e.clientY
+    }, { once: true })
 
     window.addEventListener('mousemove', e => {
       this.eulerStack.y -= e.movementX * 0.0002
-      this.eulerStack.x -= e.movementY * 0.0004
+      this.eulerStack.x -= e.movementY * 0.002
       
       if (this.animation) this.animation.kill()
       this.animation = gsap.to(this.euler, {
