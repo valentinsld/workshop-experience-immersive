@@ -124,7 +124,8 @@ export default class Scene1 {
         side: DoubleSide,
         transparent: true,
         vertexShader: require('@shaders/footstep.vert').default,
-        fragmentShader: require('@shaders/footstep.frag').default
+        fragmentShader: [require('@shaders/utils/simplexNoise.glsl').default, require('@shaders/footstep.frag').default].join('\n')
+        // fragmentShader: require('@shaders/footstep.frag').default
       } );
       // const material = new MeshBasicMaterial( { color: 0x00ff00, side: DoubleSide } )
       const mesh = new Mesh( geometry, material );
