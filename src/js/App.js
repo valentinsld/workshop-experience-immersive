@@ -78,26 +78,6 @@ export default class App {
     ssaoPass.maxDistance = 0.1
     this.composer.addPass( ssaoPass );
 
-    this.gui = new dat.GUI({ width: 420 })
-
-    this.gui.add( ssaoPass, 'output', {
-        'Default': SSAOPass.OUTPUT.Default,
-        'SSAO Only': SSAOPass.OUTPUT.SSAO,
-        'SSAO Only + Blur': SSAOPass.OUTPUT.Blur,
-        'Beauty': SSAOPass.OUTPUT.Beauty,
-        'Depth': SSAOPass.OUTPUT.Depth,
-        'Normal': SSAOPass.OUTPUT.Normal
-    } ).onChange( function ( value ) {
-
-        ssaoPass.output = parseInt( value );
-
-    } );
-    this.gui.add( ssaoPass, 'kernelRadius' ).min( 0 ).max( 32 );
-    this.gui.add( ssaoPass, 'minDistance' ).min( 0.001 ).max( 0.02 );
-    this.gui.add( ssaoPass, 'maxDistance' ).min( 0.01 ).max( 0.3 );
-
-    this.gui.close()
-
   }
   setWorld() {
     // Create world instance
