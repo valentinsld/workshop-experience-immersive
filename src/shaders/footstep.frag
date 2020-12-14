@@ -22,7 +22,7 @@ void main() {
     float disc = smoothstep( 0.02, 0.1, dist);
 
     // disc += snoise(vec2(uv.x, uv.y));
-    vec4 color = vec4(disc, disc, disc, 1. - disc);
+    vec4 color = vec4(disc, disc, disc, (.8 - disc * .8));
 
     // vec3 color = vec3(1.);
     gl_FragColor = vec4( color );

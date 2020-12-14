@@ -177,23 +177,24 @@ export default class Scene1 {
       const orientation = new Euler(-Math.PI/2, 0, 0)
       const size = new Vector3(2, 1.2, 200)
       // const geometry = new DecalGeometry( stairs, position, orientation , size );
-      const geometry = new PlaneBufferGeometry(2, 2)
-      const material = new ShaderMaterial( { 
-        side: DoubleSide,
-        transparent: true,
-        vertexShader: require('@shaders/footstep.vert').default,
-        fragmentShader: [require('@shaders/utils/simplexNoise.glsl').default, require('@shaders/footstep.frag').default].join('\n'),
-        // fragmentShader: require('@shaders/footstep.frag').default
-      } );
+      const geometry = new PlaneBufferGeometry(1, 2)
+      // const material = new ShaderMaterial( { 
+      //   side: DoubleSide,
+      //   transparent: true,
+      //   vertexShader: require('@shaders/footstep.vert').default,
+      //   fragmentShader: [require('@shaders/utils/simplexNoise.glsl').default, require('@shaders/footstep.frag').default].join('\n'),
+      //   // fragmentShader: require('@shaders/footstep.frag').default
+      // } );
 
       // /** @type Texture */
       // this.assets.textures.banksy.wrapS = RepeatWrapping
       // this.assets.textures.banksy.wrapT = RepeatWrapping
       // this.assets.textures.banksy.mapping = EquirectangularReflectionMapping
 
-      // const material = new MeshStandardMaterial({
-      //   map: this.assets.textures.banksy
-      // })
+      const material = new MeshStandardMaterial({
+        map: this.assets.textures.footstep,
+        transparent: true
+      })
 
       // const material = new MeshBasicMaterial( { color: 0x00ff00, side: DoubleSide } )
       const mesh = new Mesh( geometry, material );
@@ -206,6 +207,18 @@ export default class Scene1 {
       else mesh.position.x -= 1
 
       this.container.add( mesh )
+
+      gsap.to(mesh.scale, {
+        x: 2, y: 2, z: 2,
+        duration: 0.3,
+        ease: "power4.in"
+      })
+      debugger
+      gsap.to(mesh.material, {
+        opacity: 0,
+        duration: 0.3,
+        ease: "power4.in"
+      })
     }
 
     destruct() {
