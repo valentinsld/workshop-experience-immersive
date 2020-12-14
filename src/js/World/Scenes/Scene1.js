@@ -27,15 +27,21 @@ export default class Scene1 {
         this.stairs.rotation.y = Math.PI/2
         this.container.add(this.stairs)
 
-        this.ambientlight = new AmbientLightSource({
-            debug: this.debugFolder,
-        })
-        this.container.add(this.ambientlight.container)
+        // this.ambientlight = new AmbientLightSource({
+        //     debug: this.debugFolder,
+        // })
+        // this.container.add(this.ambientlight.container)
 
-        this.light = new PointLightSource({
-            debug: this.debugFolder,
-        })
-        this.container.add(this.light.container)
+        // this.light = new PointLightSource({
+        //     debug: this.debugFolder,
+        // })
+        // this.container.add(this.light.container)
+
+        //light
+        this.light = new PointLight(this.options.color, 0.3, 0, 2)
+        this.light.castShadow = true
+        this.light.position.set(9.45, 8, 18)
+        this.container.add(this.light)
 
         // init camera
         this.camera = App.camera.camera
