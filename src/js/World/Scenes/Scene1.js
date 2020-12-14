@@ -1,4 +1,4 @@
-import { Object3D, Mesh, Vector3, Euler, DoubleSide, Raycaster, ShaderMaterial, MeshBasicMaterial } from 'three'
+import { Object3D, Mesh, Vector3, Vector2, Euler, DoubleSide, Raycaster, ShaderMaterial, MeshBasicMaterial, MeshStandardMaterial,RepeatWrapping, EquirectangularReflectionMapping, MeshFaceMaterial, PlaneBufferGeometry } from 'three'
 import AmbientLightSource from '../AmbientLight'
 import PointLightSource from '../PointLight'
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
@@ -40,7 +40,9 @@ export default class Scene1 {
         // init camera
         this.camera = App.camera.camera
         this.cameraContainer = App.camera.container
-        this.camera.position.z = 20
+        this.camera.position.z = 27
+        this.camera.position.y = 2.5
+
 
         // raycast
         // TODO: make this optional so that it is not set on all scenes
@@ -82,11 +84,11 @@ export default class Scene1 {
           const mult = i % 2 == 0 ? -1 : 1
           
         tl.to(this.camera.position, {
-          y: '+=2',
+          y: '+=1',
           ease: EaseY,
           duration: 1,
         }).to(this.camera.position, {
-          z: "-=2",
+          z: "-=2.1",
           ease: "linear",
           duration: 1,
         }, "-=1")
@@ -114,21 +116,36 @@ export default class Scene1 {
     }
 
     createFootstep(stepIndex) {
-      console.log(require('@shaders/footstep.vert').default);
       const stairs = this.stairs.getObjectByName('Escalier')
       const position = this.cameraInstance.raycaster.intersectObject(stairs, true)[0].point
-      const orientation = new Euler(0, Math.PI/2, 0)
-      const size = new Vector3(2, 1.2, 2)
-      const geometry = new DecalGeometry( stairs, position, orientation , size );
+      const orientation = new Euler(-Math.PI/2, 0, 0)
+      const size = new Vector3(2, 1.2, 200)
+      // const geometry = new DecalGeometry( stairs, position, orientation , size );
+      const geometry = new PlaneBufferGeometry(2, 2)
       const material = new ShaderMaterial( { 
         side: DoubleSide,
         transparent: true,
         vertexShader: require('@shaders/footstep.vert').default,
-        fragmentShader: [require('@shaders/utils/simplexNoise.glsl').default, require('@shaders/footstep.frag').default].join('\n')
+        fragmentShader: [require('@shaders/utils/simplexNoise.glsl').default, require('@shaders/footstep.frag').default].join('\n'),
         // fragmentShader: require('@shaders/footstep.frag').default
       } );
+
+      console.log(material.fragmentShader);
+
+      // /** @type Texture */
+      // this.assets.textures.banksy.wrapS = RepeatWrapping
+      // this.assets.textures.banksy.wrapT = RepeatWrapping
+      // this.assets.textures.banksy.mapping = EquirectangularReflectionMapping
+
+      // const material = new MeshStandardMaterial({
+      //   map: this.assets.textures.banksy
+      // })
+
       // const material = new MeshBasicMaterial( { color: 0x00ff00, side: DoubleSide } )
       const mesh = new Mesh( geometry, material );
+      mesh.position.copy(position)
+      mesh.rotation.copy(orientation)
+      mesh.position.z += 0.1
       mesh.position.y += 0.01
       
       if(stepIndex % 2 === 0) mesh.position.x += 1
