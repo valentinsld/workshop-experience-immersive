@@ -1,4 +1,4 @@
-import { MeshStandardMaterial, Object3D, PlaneBufferGeometry, PointLight, AmbientLight, SpotLight, Mesh, Vector3, Euler, DoubleSide, Raycaster, ShaderMaterial, MeshBasicMaterial, Vector2 } from 'three'
+import { MeshStandardMaterial, Object3D, PlaneBufferGeometry, PointLight, AmbientLight, SpotLight, Mesh, Vector3, Euler, DoubleSide, Raycaster, ShaderMaterial, MeshBasicMaterial, Vector2, FrontSide, BackSide } from 'three'
 import AmbientLightSource from '../AmbientLight'
 import PointLightSource from '../PointLight'
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
@@ -20,7 +20,7 @@ export default class Scene1 {
     }
 
     setupScene() {
-        this.stairs = this.assets.models.Ernest_1412H1611.scene
+        this.stairs = this.assets.models['Ernest_1412H2140(2)'].scene
         this.stairs.scale.set(0.06, 0.06, 0.06)
         this.stairs.position.x = -60
         this.stairs.position.z = 36
@@ -67,7 +67,6 @@ export default class Scene1 {
         this.camera.position.y = 4.5
 
         // raycast
-        // TODO: make this optional so that it is not set on all scenes
         const camera = this.cameraInstance = App.camera
         camera.raycaster = new Raycaster(
           camera.camera.position,
@@ -80,7 +79,6 @@ export default class Scene1 {
         window.addEventListener('keypress', e => console.log(camera.raycaster.intersectObject(this.stairs.getObjectByName('Escalier'), true)))
 
         const stairs = this.stairs.getObjectByName('Escaliers_3')
-        // stairs.material = new MeshStandardMaterial({ map: this.assets.textures['Texture-Pignopn'] })
 
         const texture1 = cloneDeep(this.assets.textures['Texture-Pignopn'])
         texture1.offset = new Vector2(0, -0.100)
@@ -93,25 +91,22 @@ export default class Scene1 {
         texture3.repeat = new Vector2(2.040, 3.030)
         
         const materials = [
-          // new MeshBasicMaterial(),
-          // new MeshBasicMaterial(),
-          // new MeshBasicMaterial(),
           cloneDeep(this.stairs.getObjectByName('barrière_Left').material),
           new MeshStandardMaterial({ map: texture1, transparent: true }),
           new MeshStandardMaterial({ map: texture2, transparent: true }),
           new MeshStandardMaterial({ map: texture3, transparent: true })
         ]
         stairs.geometry.clearGroups()
-        stairs.geometry.addGroup( 0, Infinity, 0 )
-        stairs.geometry.addGroup( 0, Infinity, 1 )
-        stairs.geometry.addGroup( 0, Infinity, 2 )
-        stairs.geometry.addGroup( 0, Infinity, 3 )
+        stairs.geometry.addGroup( 0, 2000, 0 )
+        stairs.geometry.addGroup( 0, 2000, 1 )
+        stairs.geometry.addGroup( 0, 2000, 2 )
+        stairs.geometry.addGroup( 0, 2000, 3 )
 
         stairs.material = materials
         
-        // setTimeout(
-        //     () => {this.climbStairs(8)},
-        // 1000)
+        setTimeout(
+            () => {this.climbStairs(8)},
+        1000)
     }
 
     climbStairs(nbStairs) {
@@ -168,7 +163,7 @@ export default class Scene1 {
     }
 
     createFootstep(stepIndex) {
-      const stairs = this.stairs.getObjectByName('Escalier')
+      const stairs = this.stairs.getObjectByName('Escaliers_3')
       const position = this.cameraInstance.raycaster.intersectObject(stairs, true)[0].point
       const orientation = new Euler(-Math.PI/2, 0, 0)
       const size = new Vector3(2, 1.2, 200)
