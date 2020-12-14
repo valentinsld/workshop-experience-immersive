@@ -1,8 +1,9 @@
-import { Object3D, PlaneBufferGeometry, PointLight, AmbientLight, SpotLight, Mesh, Vector3, Euler, DoubleSide, Raycaster, ShaderMaterial, MeshBasicMaterial } from 'three'
+import { MeshStandardMaterial, Object3D, PlaneBufferGeometry, PointLight, AmbientLight, SpotLight, SpotLightHelper, Mesh, Vector3, Euler, DoubleSide, Raycaster, ShaderMaterial, MeshBasicMaterial, Vector2, RectAreaLight } from 'three'
 import AmbientLightSource from '../AmbientLight'
 import PointLightSource from '../PointLight'
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 
+import { cloneDeep } from 'lodash'
 
 import gsap from 'gsap'
 import { CustomEase } from 'gsap/CustomEase'
@@ -28,10 +29,10 @@ export default class Scene1 {
         this.container.add(this.stairs)
 
         this.stairs.children[0].children.forEach(child => {
-            if(child.material) child.material.roughness = .9
-            if(child.children) child.children.forEach(cc => {cc.material.roughness = .7})
+            if(child.material) child.material.roughness = .75
+            if(child.children) child.children.forEach(cc => {cc.material.roughness = .6})
         })
-            // console.log(this.container.getObjectByName("mesh_12_13").material.emissive = 1)
+        this.stairs.getObjectByName("mesh_12_5").material.roughness = 1
 
         // Ambient light
         this.ambienteLight = new AmbientLight(0x316fcc, 0.12)
@@ -44,22 +45,27 @@ export default class Scene1 {
         this.container.add(this.light)
 
         // Spot light
-        this.spotLight = new SpotLight( 0x3A5DDE, 3, 250, .8, 1, 6.9 );
+        this.spotLight = new SpotLight( 0x3A5DDE, 3, 400, 0.450, 1, 6.9 );
         this.spotLight.position.set( -10, 55, -10 );
 
-        this.spotLight.castShadow = true;
-        this.spotLight.shadow.mapSize.width = 1024;
-        this.spotLight.shadow.mapSize.height = 1024;
-        this.spotLight.shadow.camera.near = 500;
-        this.spotLight.shadow.camera.far = 4000;
-        this.spotLight.shadow.camera.fov = 30;
         this.container.add( this.spotLight );
 
         const targetObject = new Object3D();
-        targetObject.position.set(10 ,0 ,20)
+        targetObject.position.set(15 ,0 ,45)
         this.container.add(targetObject);
         
         this.spotLight.target = targetObject;
+
+        // rectLight Bis
+        const rectLightG = new RectAreaLight( 0x3A5DDE, 1,  20, 50 );
+        rectLightG.position.set( 3.3, 20, 0 );
+        rectLightG.rotation.set( 1.9, Math.PI, 0 );
+        this.container.add( rectLightG )
+
+        // light for metro maps
+        const rectLight = new RectAreaLight( 0xffffff, .15,  8.42, 6 );
+        rectLight.position.set( -14.14, 3.410, 30.8 );
+        this.container.add( rectLight )
 
         // init camera
         this.camera = App.camera.camera
@@ -80,6 +86,36 @@ export default class Scene1 {
         ))
         window.addEventListener('keypress', e => console.log(camera.raycaster.intersectObject(this.stairs.getObjectByName('Escalier'), true)))
 
+        const stairs = this.stairs.getObjectByName('Escaliers_3')
+        // stairs.material = new MeshStandardMaterial({ map: this.assets.textures['Texture-Pignopn'] })
+
+        const texture1 = cloneDeep(this.assets.textures['Texture-Pignopn'])
+        texture1.offset = new Vector2(0, -0.100)
+        texture1.repeat = new Vector2(2.040, 3.030)
+        const texture2 = cloneDeep(this.assets.textures['Texture-Pignopn'])
+        texture2.offset = new Vector2(-1.710, -1.070)
+        texture2.repeat = new Vector2(2.040, 3.030)
+        const texture3 = cloneDeep(this.assets.textures['Texture-Pignopn'])
+        texture3.offset = new Vector2(0, -2.100)
+        texture3.repeat = new Vector2(2.040, 3.030)
+        
+        const materials = [
+          // new MeshBasicMaterial(),
+          // new MeshBasicMaterial(),
+          // new MeshBasicMaterial(),
+          cloneDeep(this.stairs.getObjectByName('barrière_Left').material),
+          new MeshStandardMaterial({ map: texture1, transparent: true }),
+          new MeshStandardMaterial({ map: texture2, transparent: true }),
+          new MeshStandardMaterial({ map: texture3, transparent: true })
+        ]
+        stairs.geometry.clearGroups()
+        stairs.geometry.addGroup( 0, Infinity, 0 )
+        stairs.geometry.addGroup( 0, Infinity, 1 )
+        stairs.geometry.addGroup( 0, Infinity, 2 )
+        stairs.geometry.addGroup( 0, Infinity, 3 )
+
+        stairs.material = materials
+        
         // setTimeout(
         //     () => {this.climbStairs(8)},
         // 1000)
@@ -152,8 +188,6 @@ export default class Scene1 {
         fragmentShader: [require('@shaders/utils/simplexNoise.glsl').default, require('@shaders/footstep.frag').default].join('\n'),
         // fragmentShader: require('@shaders/footstep.frag').default
       } );
-
-      console.log(material.fragmentShader);
 
       // /** @type Texture */
       // this.assets.textures.banksy.wrapS = RepeatWrapping
