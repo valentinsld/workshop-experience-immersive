@@ -52,8 +52,7 @@ export default class App {
     this.time.on('tick', () => {
       if (this.stats) this.stats.begin();
 
-      // this.composer.render();
-      this.renderer.render(this.scene, this.camera.camera)
+      this.composer.render();
 
       if (this.stats) this.stats.end();
     })

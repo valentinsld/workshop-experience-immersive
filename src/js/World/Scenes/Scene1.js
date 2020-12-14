@@ -1,4 +1,4 @@
-import { MeshStandardMaterial, Object3D, PlaneBufferGeometry, PointLight, AmbientLight, SpotLight, Mesh, Vector3, Euler, DoubleSide, Raycaster, ShaderMaterial, MeshBasicMaterial, Vector2, FrontSide, BackSide } from 'three'
+import { MeshStandardMaterial, Object3D, PlaneBufferGeometry, PointLight, AmbientLight, SpotLight, SpotLightHelper, Mesh, Vector3, Euler, DoubleSide, Raycaster, ShaderMaterial, MeshBasicMaterial, Vector2, RectAreaLight } from 'three'
 import AmbientLightSource from '../AmbientLight'
 import PointLightSource from '../PointLight'
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
@@ -29,8 +29,12 @@ export default class Scene1 {
         this.container.add(this.stairs)
 
         this.stairs.children[0].children.forEach(child => {
-            if(child.material) child.material.roughness = 1
+            if(child.material) child.material.roughness = .75
+            if(child.children) child.children.forEach(cc => {cc.material.roughness = .6})
         })
+        
+        const plan = this.stairs.getObjectByName("mesh_12_5")
+        if(plan) plan.material.roughness = 1
 
         // Ambient light
         this.ambienteLight = new AmbientLight(0x316fcc, 0.12)
@@ -43,22 +47,27 @@ export default class Scene1 {
         this.container.add(this.light)
 
         // Spot light
-        this.spotLight = new SpotLight( 0x3A5DDE, 3, 250, .8, 1, 6.9 );
+        this.spotLight = new SpotLight( 0x3A5DDE, 3, 400, 0.450, 1, 6.9 );
         this.spotLight.position.set( -10, 55, -10 );
 
-        this.spotLight.castShadow = true;
-        this.spotLight.shadow.mapSize.width = 1024;
-        this.spotLight.shadow.mapSize.height = 1024;
-        this.spotLight.shadow.camera.near = 500;
-        this.spotLight.shadow.camera.far = 4000;
-        this.spotLight.shadow.camera.fov = 30;
         this.container.add( this.spotLight );
 
         const targetObject = new Object3D();
-        targetObject.position.set(10 ,0 ,20)
+        targetObject.position.set(15 ,0 ,45)
         this.container.add(targetObject);
         
         this.spotLight.target = targetObject;
+
+        // rectLight Bis
+        const rectLightG = new RectAreaLight( 0x3A5DDE, 1,  20, 50 );
+        rectLightG.position.set( 3.3, 20, 0 );
+        rectLightG.rotation.set( 1.9, Math.PI, 0 );
+        this.container.add( rectLightG )
+
+        // light for metro maps
+        const rectLight = new RectAreaLight( 0xffffff, .15,  8.42, 6 );
+        rectLight.position.set( -14.14, 3.410, 30.8 );
+        this.container.add( rectLight )
 
         // init camera
         this.camera = App.camera.camera
