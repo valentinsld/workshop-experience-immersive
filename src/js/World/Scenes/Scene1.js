@@ -19,7 +19,7 @@ export default class Scene1 {
     }
 
     setupScene() {
-        this.stairs = this.assets.models.Ernest_1412H1400.scene
+        this.stairs = this.assets.models.Ernest_1412H1645.scene
         this.stairs.scale.set(0.06, 0.06, 0.06)
         this.stairs.position.x = -60
         this.stairs.position.z = 36
@@ -28,8 +28,10 @@ export default class Scene1 {
         this.container.add(this.stairs)
 
         this.stairs.children[0].children.forEach(child => {
-            if(child.material) child.material.roughness = 1
+            if(child.material) child.material.roughness = .9
+            if(child.children) child.children.forEach(cc => {cc.material.roughness = .7})
         })
+            // console.log(this.container.getObjectByName("mesh_12_13").material.emissive = 1)
 
         // Ambient light
         this.ambienteLight = new AmbientLight(0x316fcc, 0.12)
@@ -78,9 +80,9 @@ export default class Scene1 {
         ))
         window.addEventListener('keypress', e => console.log(camera.raycaster.intersectObject(this.stairs.getObjectByName('Escalier'), true)))
 
-        setTimeout(
-            () => {this.climbStairs(8)},
-        1000)
+        // setTimeout(
+        //     () => {this.climbStairs(8)},
+        // 1000)
     }
 
     climbStairs(nbStairs) {
