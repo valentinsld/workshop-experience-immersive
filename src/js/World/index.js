@@ -58,6 +58,7 @@ export default class World {
   setScenes() {
     this.sceneManager = new SceneManager({
       assets: this.assets,
+      time: this.time,
       options: {
         debug: this.debug
       }
