@@ -119,7 +119,6 @@ export default class Scene1 {
     }
 
     climbStairs(nbStairs) {
-        console.log('hey');
       const EaseY = CustomEase.create(
         'custom',
         'M0,0 C0.134,0.022 0.524,1.027 0.856,1.028 0.92,1.028 0.96,1.01 1,1 '
@@ -213,7 +212,6 @@ export default class Scene1 {
         duration: 0.3,
         ease: "power4.in"
       })
-      debugger
       gsap.to(mesh.material, {
         opacity: 0,
         duration: 0.3,

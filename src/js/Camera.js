@@ -27,14 +27,16 @@ export default class Camera {
     }, { once: true })
 
     window.addEventListener('mousemove', e => {
-      this.eulerStack.y -= e.movementX * 0.0002
-      this.eulerStack.x -= e.movementY * 0.002
-      
+      const correctionX = this.baseCursorPosition.x - (window.innerWidth/2)
+      // this.eulerStack.y -= (e.movementX) * 0.0002
+      // this.eulerStack.x -= (e.movementY) * 0.002
+      this.eulerStack.y = -((e.clientX - window.innerWidth/2)) * 0.0002
+      this.eulerStack.x = -(e.clientY - window.innerHeight/2) * 0.0002
       if (this.animation) this.animation.kill()
       this.animation = gsap.to(this.euler, {
         y: this.eulerStack.y,
         x: this.eulerStack.x,
-        duration: 0.5,
+        duration: 4.5,
         ease: "power4.easeOut"
       })
     })
