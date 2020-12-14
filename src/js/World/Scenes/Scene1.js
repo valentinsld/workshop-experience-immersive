@@ -1,8 +1,9 @@
-import { Object3D, PlaneBufferGeometry, PointLight, AmbientLight, SpotLight, Mesh, Vector3, Euler, DoubleSide, Raycaster, ShaderMaterial, MeshBasicMaterial } from 'three'
+import { MeshStandardMaterial, Object3D, PlaneBufferGeometry, PointLight, AmbientLight, SpotLight, Mesh, Vector3, Euler, DoubleSide, Raycaster, ShaderMaterial, MeshBasicMaterial, Vector2 } from 'three'
 import AmbientLightSource from '../AmbientLight'
 import PointLightSource from '../PointLight'
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 
+import { cloneDeep } from 'lodash'
 
 import gsap from 'gsap'
 import { CustomEase } from 'gsap/CustomEase'
@@ -19,7 +20,7 @@ export default class Scene1 {
     }
 
     setupScene() {
-        this.stairs = this.assets.models.Ernest_1412H1400.scene
+        this.stairs = this.assets.models.Ernest_1412H1611.scene
         this.stairs.scale.set(0.06, 0.06, 0.06)
         this.stairs.position.x = -60
         this.stairs.position.z = 36
@@ -78,9 +79,39 @@ export default class Scene1 {
         ))
         window.addEventListener('keypress', e => console.log(camera.raycaster.intersectObject(this.stairs.getObjectByName('Escalier'), true)))
 
-        setTimeout(
-            () => {this.climbStairs(8)},
-        1000)
+        const stairs = this.stairs.getObjectByName('Escaliers_3')
+        // stairs.material = new MeshStandardMaterial({ map: this.assets.textures['Texture-Pignopn'] })
+
+        const texture1 = cloneDeep(this.assets.textures['Texture-Pignopn'])
+        texture1.offset = new Vector2(0, -0.100)
+        texture1.repeat = new Vector2(2.040, 3.030)
+        const texture2 = cloneDeep(this.assets.textures['Texture-Pignopn'])
+        texture2.offset = new Vector2(-1.710, -1.070)
+        texture2.repeat = new Vector2(2.040, 3.030)
+        const texture3 = cloneDeep(this.assets.textures['Texture-Pignopn'])
+        texture3.offset = new Vector2(0, -2.100)
+        texture3.repeat = new Vector2(2.040, 3.030)
+        
+        const materials = [
+          // new MeshBasicMaterial(),
+          // new MeshBasicMaterial(),
+          // new MeshBasicMaterial(),
+          cloneDeep(this.stairs.getObjectByName('barrière_Left').material),
+          new MeshStandardMaterial({ map: texture1, transparent: true }),
+          new MeshStandardMaterial({ map: texture2, transparent: true }),
+          new MeshStandardMaterial({ map: texture3, transparent: true })
+        ]
+        stairs.geometry.clearGroups()
+        stairs.geometry.addGroup( 0, Infinity, 0 )
+        stairs.geometry.addGroup( 0, Infinity, 1 )
+        stairs.geometry.addGroup( 0, Infinity, 2 )
+        stairs.geometry.addGroup( 0, Infinity, 3 )
+
+        stairs.material = materials
+        
+        // setTimeout(
+        //     () => {this.climbStairs(8)},
+        // 1000)
     }
 
     climbStairs(nbStairs) {
@@ -150,8 +181,6 @@ export default class Scene1 {
         fragmentShader: [require('@shaders/utils/simplexNoise.glsl').default, require('@shaders/footstep.frag').default].join('\n'),
         // fragmentShader: require('@shaders/footstep.frag').default
       } );
-
-      console.log(material.fragmentShader);
 
       // /** @type Texture */
       // this.assets.textures.banksy.wrapS = RepeatWrapping
