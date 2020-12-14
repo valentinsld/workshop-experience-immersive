@@ -3,6 +3,7 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { SSAOPass } from 'three/examples/jsm/postprocessing/SSAOPass.js';
 
 import * as dat from 'dat.gui'
+import Stats from 'stats-js'
 
 import Sizes from '@tools/Sizes'
 import Time from '@tools/Time'
@@ -49,8 +50,13 @@ export default class App {
     })
     // Set RequestAnimationFrame with 60ips
     this.time.on('tick', () => {
+      if (this.stats) this.stats.begin();
+
+
       this.renderer.render(this.scene, this.camera.camera)
       this.composer.render();
+
+      if (this.stats) this.stats.end();
     })
   }
   setCamera() {
@@ -108,6 +114,12 @@ export default class App {
   setConfig() {
     if (window.location.hash === '#debug') {
       this.debug = new dat.GUI({ width: 420 })
+   
+      //   Stats
+      /////////////////////////////
+      this.stats = new Stats();
+      this.stats.showPanel( 0 );
+      document.body.appendChild( this.stats.dom );
     }
   }
 }
