@@ -37,7 +37,7 @@ export default class App {
       antialias: true,
     })
     // Set background color
-    this.renderer.setClearColor(0x212121, 1)
+    this.renderer.setClearColor(0x000000, 1) // 0x050C2F
     // Set renderer pixel ratio & sizes
     this.renderer.setPixelRatio(window.devicePixelRatio)
     this.renderer.setSize(this.sizes.viewport.width, this.sizes.viewport.height)
@@ -52,8 +52,6 @@ export default class App {
     this.time.on('tick', () => {
       if (this.stats) this.stats.begin();
 
-
-      this.renderer.render(this.scene, this.camera.camera)
       this.composer.render();
 
       if (this.stats) this.stats.end();
