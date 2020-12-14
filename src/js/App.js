@@ -37,7 +37,7 @@ export default class App {
       antialias: true,
     })
     // Set background color
-    this.renderer.setClearColor(0x212121, 1)
+    this.renderer.setClearColor(0x000000, 1) // 0x050C2F
     // Set renderer pixel ratio & sizes
     this.renderer.setPixelRatio(window.devicePixelRatio)
     this.renderer.setSize(this.sizes.viewport.width, this.sizes.viewport.height)
@@ -52,8 +52,6 @@ export default class App {
     this.time.on('tick', () => {
       if (this.stats) this.stats.begin();
 
-
-      this.renderer.render(this.scene, this.camera.camera)
       this.composer.render();
 
       if (this.stats) this.stats.end();
@@ -79,26 +77,6 @@ export default class App {
     ssaoPass.minDistance = 0.0025
     ssaoPass.maxDistance = 0.1
     this.composer.addPass( ssaoPass );
-
-    this.gui = new dat.GUI({ width: 420 })
-
-    this.gui.add( ssaoPass, 'output', {
-        'Default': SSAOPass.OUTPUT.Default,
-        'SSAO Only': SSAOPass.OUTPUT.SSAO,
-        'SSAO Only + Blur': SSAOPass.OUTPUT.Blur,
-        'Beauty': SSAOPass.OUTPUT.Beauty,
-        'Depth': SSAOPass.OUTPUT.Depth,
-        'Normal': SSAOPass.OUTPUT.Normal
-    } ).onChange( function ( value ) {
-
-        ssaoPass.output = parseInt( value );
-
-    } );
-    this.gui.add( ssaoPass, 'kernelRadius' ).min( 0 ).max( 32 );
-    this.gui.add( ssaoPass, 'minDistance' ).min( 0.001 ).max( 0.02 );
-    this.gui.add( ssaoPass, 'maxDistance' ).min( 0.01 ).max( 0.3 );
-
-    this.gui.close()
 
   }
   setWorld() {

@@ -1,4 +1,4 @@
-import { Object3D, Mesh, Vector3, Vector2, Euler, DoubleSide, Raycaster, ShaderMaterial, MeshBasicMaterial, MeshStandardMaterial,RepeatWrapping, EquirectangularReflectionMapping, MeshFaceMaterial, PlaneBufferGeometry } from 'three'
+import { Object3D, PlaneBufferGeometry, PointLight, AmbientLight, SpotLight, Mesh, Vector3, Euler, DoubleSide, Raycaster, ShaderMaterial, MeshBasicMaterial } from 'three'
 import AmbientLightSource from '../AmbientLight'
 import PointLightSource from '../PointLight'
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
@@ -19,7 +19,7 @@ export default class Scene1 {
     }
 
     setupScene() {
-        this.stairs = this.assets.models.Ernest_M2.scene
+        this.stairs = this.assets.models.Ernest_1412H1400.scene
         this.stairs.scale.set(0.06, 0.06, 0.06)
         this.stairs.position.x = -60
         this.stairs.position.z = 36
@@ -27,22 +27,43 @@ export default class Scene1 {
         this.stairs.rotation.y = Math.PI/2
         this.container.add(this.stairs)
 
-        this.ambientlight = new AmbientLightSource({
-            debug: this.debugFolder,
+        this.stairs.children[0].children.forEach(child => {
+            if(child.material) child.material.roughness = 1
         })
-        this.container.add(this.ambientlight.container)
 
-        this.light = new PointLightSource({
-            debug: this.debugFolder,
-        })
-        this.container.add(this.light.container)
+        // Ambient light
+        this.ambienteLight = new AmbientLight(0x316fcc, 0.12)
+        this.container.add(this.ambienteLight)
+
+        // Light
+        this.light = new PointLight(0x316fcc, 0.32, 0, 2)
+        this.light.castShadow = true
+        this.light.position.set(9.45, 7, 45)
+        this.container.add(this.light)
+
+        // Spot light
+        this.spotLight = new SpotLight( 0x3A5DDE, 3, 250, .8, 1, 6.9 );
+        this.spotLight.position.set( -10, 55, -10 );
+
+        this.spotLight.castShadow = true;
+        this.spotLight.shadow.mapSize.width = 1024;
+        this.spotLight.shadow.mapSize.height = 1024;
+        this.spotLight.shadow.camera.near = 500;
+        this.spotLight.shadow.camera.far = 4000;
+        this.spotLight.shadow.camera.fov = 30;
+        this.container.add( this.spotLight );
+
+        const targetObject = new Object3D();
+        targetObject.position.set(10 ,0 ,20)
+        this.container.add(targetObject);
+        
+        this.spotLight.target = targetObject;
 
         // init camera
         this.camera = App.camera.camera
         this.cameraContainer = App.camera.container
         this.camera.position.z = 27
-        this.camera.position.y = 2.5
-
+        this.camera.position.y = 4.5
 
         // raycast
         // TODO: make this optional so that it is not set on all scenes
@@ -88,7 +109,7 @@ export default class Scene1 {
           ease: EaseY,
           duration: 1,
         }).to(this.camera.position, {
-          z: "-=2.1",
+          z: "-=2.05",
           ease: "linear",
           duration: 1,
         }, "-=1")
