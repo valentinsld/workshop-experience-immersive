@@ -20,23 +20,15 @@ export default class Camera {
     this.baseCursorPosition = {x: 0, y: 0}
     this.euler.setFromQuaternion( this.container.quaternion )
 
-    // TODO: complete calibration
-    window.addEventListener('mousemove', e => {
-      this.baseCursorPosition.x = e.clientX
-      this.baseCursorPosition.y = e.clientY
-    }, { once: true })
-
     window.addEventListener('mousemove', e => {
       const correctionX = this.baseCursorPosition.x - (window.innerWidth/2)
-      // this.eulerStack.y -= (e.movementX) * 0.0002
-      // this.eulerStack.x -= (e.movementY) * 0.002
       this.eulerStack.y = -((e.clientX - window.innerWidth/2)) * 0.0002
       this.eulerStack.x = -(e.clientY - window.innerHeight/2) * 0.0002
       if (this.animation) this.animation.kill()
       this.animation = gsap.to(this.euler, {
         y: this.eulerStack.y,
         x: this.eulerStack.x,
-        duration: 4.5,
+        duration: 2.5,
         ease: "power4.easeOut"
       })
     })
@@ -54,8 +46,8 @@ export default class Camera {
     this.camera = new PerspectiveCamera(
       75,
       this.sizes.viewport.width / this.sizes.viewport.height,
-      0.1,
-      1000
+      1,
+      500
     )
     this.container.add(this.camera)
     // Change camera aspect on resize

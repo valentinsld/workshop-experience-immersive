@@ -1,14 +1,28 @@
-import { MeshStandardMaterial, Object3D, PlaneBufferGeometry, PointLight, AmbientLight, SpotLight, SpotLightHelper, Mesh, Vector3, Euler, DoubleSide, Raycaster, ShaderMaterial, MeshBasicMaterial, Vector2, RectAreaLight } from 'three'
-import AmbientLightSource from '../AmbientLight'
-import PointLightSource from '../PointLight'
+import { 
+  MeshStandardMaterial, 
+  Object3D, 
+  PlaneBufferGeometry, 
+  PointLight, 
+  AmbientLight,
+  SpotLight,
+  Mesh,
+  Vector3,
+  Euler,
+  Raycaster,
+  Vector2, 
+  RectAreaLight, 
+  MeshLambertMaterial, 
+  Group, 
+  Fog} from 'three'
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 
 import { cloneDeep } from 'lodash'
 
 import gsap from 'gsap'
 import { CustomEase } from 'gsap/CustomEase'
-import QTE from '../../QTE';
 gsap.registerPlugin(CustomEase)
+
+import QTE from '../../QTE';
 
 export default class Scene1 {
     constructor({ assets, time }) {
@@ -32,25 +46,23 @@ export default class Scene1 {
         //     duration: 1,
         // })
 
-        QTE.newPluralChoose({     
-          chooses : [
-            {
-              keyCode: "Q",
-              text: 'Marcher sur les collages',
-              functionEnd: () => {console.log('Q')},
-            },{
-              keyCode: "D",
-              text: 'Esquivez les collages',
-              functionEnd: () => {console.log('D')},
-            }
-          ],
-          duration: 5,
-          defaultChoose: 0
-        })
+        // QTE.newPluralChoose({     
+        //   chooses : [
+        //     {
+        //       keyCode: "Q",
+        //       text: 'Marcher sur les collages',
+        //       functionEnd: () => {console.log('Q')},
+        //     },{
+        //       keyCode: "D",
+        //       text: 'Esquivez les collages',
+        //       functionEnd: () => {console.log('D')},
+        //     }
+        //   ],
+        //   duration: 5,
+        //   defaultChoose: 0
+        // })
 
-        return
         this.stairs = this.assets.models['Ernest_1412H1645'].scene
-
         this.stairs.scale.set(0.06, 0.06, 0.06)
         this.stairs.position.x = -60
         this.stairs.position.z = 36
@@ -88,16 +100,16 @@ export default class Scene1 {
         
         this.spotLight.target = targetObject;
 
-        // rectLight Bis
+        // // rectLight Bis
         const rectLightG = new RectAreaLight( 0x3A5DDE, 1,  20, 50 );
         rectLightG.position.set( 3.3, 20, 0 );
         rectLightG.rotation.set( 1.9, Math.PI, 0 );
         this.container.add( rectLightG )
 
-        // light for metro maps
-        const rectLight = new RectAreaLight( 0xffffff, .15,  8.42, 6 );
-        rectLight.position.set( -14.14, 3.410, 30.8 );
-        this.container.add( rectLight )
+        // // light for metro maps
+        // const rectLight = new RectAreaLight( 0xffffff, .15,  8.42, 6 );
+        // rectLight.position.set( -14.14, 3.410, 30.8 );
+        // this.container.add( rectLight )
 
         // init camera
         this.camera = App.camera.camera
@@ -126,7 +138,7 @@ export default class Scene1 {
         texture2.offset = new Vector2(-1.710, -1.070)
         texture2.repeat = new Vector2(2.040, 3.030)
         const texture3 = cloneDeep(this.assets.textures['Texture-Pignopn'])
-        texture3.offset = new Vector2(0, -2.100)
+        texture3.offset = new Vector2(0, -1.950)
         texture3.repeat = new Vector2(2.040, 3.030)
         
         const materials = [
@@ -136,12 +148,21 @@ export default class Scene1 {
           new MeshStandardMaterial({ map: texture3, transparent: true })
         ]
         stairs.geometry.clearGroups()
-        stairs.geometry.addGroup( 0, 2000, 0 )
-        stairs.geometry.addGroup( 0, 2000, 1 )
-        stairs.geometry.addGroup( 0, 2000, 2 )
-        stairs.geometry.addGroup( 0, 2000, 3 )
+        stairs.geometry.addGroup( 0, 1000, 0 )
+        stairs.geometry.addGroup( 0, 1000, 1 )
+        stairs.geometry.addGroup( 0, 1000, 2 )
+        stairs.geometry.addGroup( 0, 1000, 3 )
 
         stairs.material = materials
+
+        this.stairs.traverse(child => {
+          child.matrixAutoUpdate = false
+          child.updateMatrix()
+        })
+
+        this.createSmoke()
+
+        App.scene.fog = new Fog(0x030B24, 1, 50)
         
         // setTimeout(
         //     () => {this.climbStairs(8)},
@@ -150,6 +171,45 @@ export default class Scene1 {
 
     test() {
       console.log('played')
+    }
+
+    createSmoke() {
+      const smokeContainer = new Group()
+      const smokeGeo = new PlaneBufferGeometry(25, 25);
+
+      const smokeMaterial1 = new MeshLambertMaterial({
+          map: this.assets.textures.smoke3,
+          opacity: 0.2,
+          transparent: true
+      });
+      
+      const smokeMaterial2 = new MeshLambertMaterial({
+          map: this.assets.textures.smoke3,
+          opacity: 0.2,
+          transparent: true
+      });
+
+      for (let i = 0; i < 50; i++) {
+        const particle = new Mesh(smokeGeo, i % 2 === 0 ? smokeMaterial1 : smokeMaterial2,)
+        particle.position.set(
+          (Math.random() - 0.5) * 30,
+          (Math.random() - 0.5) * 1,
+          (Math.random() - 0.5) * 4,
+        )
+        particle.rotation.z = Math.random() * 360
+        smokeContainer.add(particle)
+      }
+
+      this.time.on('tick', () => {
+        smokeContainer.children.forEach(child => {
+          const z = child.rotation.z
+          child.lookAt(this.camera.position)
+          child.rotation.z = z+0.008
+        })
+      })
+
+      smokeContainer.position.set(0, 10, -5)
+      this.container.add(smokeContainer)
     }
 
     climbStairs(nbStairs) {
@@ -219,17 +279,11 @@ export default class Scene1 {
       //   // fragmentShader: require('@shaders/footstep.frag').default
       // } );
 
-      // /** @type Texture */
-      // this.assets.textures.banksy.wrapS = RepeatWrapping
-      // this.assets.textures.banksy.wrapT = RepeatWrapping
-      // this.assets.textures.banksy.mapping = EquirectangularReflectionMapping
-
       const material = new MeshStandardMaterial({
         map: this.assets.textures.footstep,
         transparent: true
       })
 
-      // const material = new MeshBasicMaterial( { color: 0x00ff00, side: DoubleSide } )
       const mesh = new Mesh( geometry, material );
       mesh.position.copy(position)
       mesh.rotation.copy(orientation)
