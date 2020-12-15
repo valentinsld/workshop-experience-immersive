@@ -1,12 +1,26 @@
-import { MeshStandardMaterial, Object3D, PlaneBufferGeometry, PointLight, AmbientLight, SpotLight, SpotLightHelper, Mesh, Vector3, Euler, DoubleSide, Raycaster, ShaderMaterial, MeshBasicMaterial, Vector2, RectAreaLight } from 'three'
-import AmbientLightSource from '../AmbientLight'
-import PointLightSource from '../PointLight'
+import { 
+  MeshStandardMaterial, 
+  Object3D, 
+  PlaneBufferGeometry, 
+  PointLight, 
+  AmbientLight,
+  SpotLight,
+  Mesh,
+  Vector3,
+  Euler,
+  Raycaster,
+  Vector2, 
+  RectAreaLight, 
+  MeshLambertMaterial, 
+  Group, 
+  Fog} from 'three'
 import { DecalGeometry } from "three/examples/jsm/geometries/DecalGeometry";
 
 import { cloneDeep } from 'lodash'
 
 import gsap from 'gsap'
 import { CustomEase } from 'gsap/CustomEase'
+
 gsap.registerPlugin(CustomEase)
 
 export default class Scene1 {
@@ -59,10 +73,10 @@ export default class Scene1 {
         this.spotLight.target = targetObject;
 
         // // rectLight Bis
-        // const rectLightG = new RectAreaLight( 0x3A5DDE, 1,  20, 50 );
-        // rectLightG.position.set( 3.3, 20, 0 );
-        // rectLightG.rotation.set( 1.9, Math.PI, 0 );
-        // this.container.add( rectLightG )
+        const rectLightG = new RectAreaLight( 0x3A5DDE, 1,  20, 50 );
+        rectLightG.position.set( 3.3, 20, 0 );
+        rectLightG.rotation.set( 1.9, Math.PI, 0 );
+        this.container.add( rectLightG )
 
         // // light for metro maps
         // const rectLight = new RectAreaLight( 0xffffff, .15,  8.42, 6 );
@@ -96,7 +110,7 @@ export default class Scene1 {
         texture2.offset = new Vector2(-1.710, -1.070)
         texture2.repeat = new Vector2(2.040, 3.030)
         const texture3 = cloneDeep(this.assets.textures['Texture-Pignopn'])
-        texture3.offset = new Vector2(0, -2.100)
+        texture3.offset = new Vector2(0, -1.950)
         texture3.repeat = new Vector2(2.040, 3.030)
         
         const materials = [
@@ -117,10 +131,53 @@ export default class Scene1 {
           child.matrixAutoUpdate = false
           child.updateMatrix()
         })
+
+        this.createSmoke()
+
+        App.scene.fog = new Fog(0x030B24, 1, 50)
         
-        // setTimeout(
-        //     () => {this.climbStairs(8)},
-        // 1000)
+        setTimeout(
+            () => {this.climbStairs(8)},
+        1000)
+    }
+
+    createSmoke() {
+      const smokeContainer = new Group()
+      const smokeGeo = new PlaneBufferGeometry(25, 25);
+
+      const smokeMaterial1 = new MeshLambertMaterial({
+          map: this.assets.textures.smoke3,
+          opacity: 0.2,
+          transparent: true
+      });
+      
+      const smokeMaterial2 = new MeshLambertMaterial({
+          map: this.assets.textures.smoke3,
+          opacity: 0.2,
+          transparent: true
+      });
+
+      for (let i = 0; i < 50; i++) {
+        const particle = new Mesh(smokeGeo, i % 2 === 0 ? smokeMaterial1 : smokeMaterial2,)
+        particle.position.set(
+          (Math.random() - 0.5) * 30,
+          (Math.random() - 0.5) * 1,
+          (Math.random() - 0.5) * 4,
+        )
+        particle.rotation.z = Math.random() * 360
+        smokeContainer.add(particle)
+      }
+
+      this.time.on('tick', () => {
+        smokeContainer.children.forEach(child => {
+          const z = child.rotation.z
+          child.lookAt(this.camera.position)
+          child.rotation.z = z+0.008
+        })
+      })
+
+      smokeContainer.position.set(0, 10, -5)
+      this.container.add(smokeContainer)
     }
 
     climbStairs(nbStairs) {

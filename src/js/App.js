@@ -1,4 +1,4 @@
-import { Scene, WebGLRenderer } from 'three'
+import { Scene, WebGLRenderer, Color } from 'three'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { SSAOPass } from 'three/examples/jsm/postprocessing/SSAOPass.js';
 
@@ -30,6 +30,7 @@ export default class App {
   setRenderer() {
     // Set scene
     this.scene = new Scene()
+    // this.scene.background = new Color( 0x050C2F )
     // Set renderer
     this.renderer = new WebGLRenderer({
       canvas: this.canvas,
@@ -37,7 +38,7 @@ export default class App {
       antialias: true,
     })
     // Set background color
-    this.renderer.setClearColor(0x000000, 1) // 0x050C2F
+    this.renderer.setClearColor(0x030B24, 1) // 0x050C2F
     // Set renderer pixel ratio & sizes
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     this.renderer.setSize(this.sizes.viewport.width, this.sizes.viewport.height)
@@ -53,6 +54,7 @@ export default class App {
       if (this.stats) this.stats.begin();
 
       this.composer.render();
+      // this.renderer.render(this.scene, this.camera.camera)
 
       if (this.stats) this.stats.end();
     })
