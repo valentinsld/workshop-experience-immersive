@@ -1,0 +1,62 @@
+#qte {
+    pointer-events: none
+}
+
+
+#pluralChoose__one,
+#pluralChoose__two
+    position absolute
+    top: 50%
+    transform translate3D(0, -50%, 0)
+    margin 50px
+
+    text-align center
+
+    opacity 0
+    transition: opacity 300ms ease-out
+
+
+#pluralChoose__one 
+    left: 0
+#pluralChoose__two 
+    right: 0
+
+
+#pluralChoose__bar 
+    position absolute
+    left 50%
+    bottom 0
+    transform translate3D(-50%, -50%, 0)
+    margin-bottom 50px
+
+    min-width 500px
+    text-align center
+
+    opacity 0
+
+#pluralChoose__bar .line 
+    height 5px
+    width 0
+    background var(--white)
+
+
+#monoChoose 
+    position absolute
+    top 50%
+    right 10%
+
+    opacity 0
+    transition: opacity 300ms ease-out
+
+#monoChoose .line 
+    display block
+    height 5px
+    width 0
+    background var(--white)
+
+
+#pluralChoose__one.show,
+#pluralChoose__two.show,
+#pluralChoose__bar.show,
+#monoChoose.show
+    opacity 1

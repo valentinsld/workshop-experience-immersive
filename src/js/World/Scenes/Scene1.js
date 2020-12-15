@@ -7,6 +7,7 @@ import { cloneDeep } from 'lodash'
 
 import gsap from 'gsap'
 import { CustomEase } from 'gsap/CustomEase'
+import QTE from '../../QTE';
 gsap.registerPlugin(CustomEase)
 
 export default class Scene1 {
@@ -20,6 +21,34 @@ export default class Scene1 {
     }
 
     setupScene() {
+        // QTE.newMonoChoose({
+        //   choose: {
+        //       keyCode: " ",
+        //       text: 'Avancer vers la scene<br>Appuyez sur espace',
+        //       functionEnd: () => {
+        //         console.log('SPACE')
+        //       },
+        //     },
+        //     duration: 1,
+        // })
+
+        QTE.newPluralChoose({     
+          chooses : [
+            {
+              keyCode: "Q",
+              text: 'Marcher sur les collages',
+              functionEnd: () => {console.log('Q')},
+            },{
+              keyCode: "D",
+              text: 'Esquivez les collages',
+              functionEnd: () => {console.log('D')},
+            }
+          ],
+          duration: 5,
+          defaultChoose: 0
+        })
+
+        return
         this.stairs = this.assets.models['Ernest_1412H1645'].scene
 
         this.stairs.scale.set(0.06, 0.06, 0.06)
@@ -28,9 +57,6 @@ export default class Scene1 {
         this.stairs.position.y = -4
         this.stairs.rotation.y = Math.PI/2
         this.container.add(this.stairs)
-
-        this.stairs.matrixAutoUpdate = false
-        this.stairs.updateMatrix()
 
         this.stairs.children[0].children.forEach(child => {
             if(child.material) child.material.roughness = .75
@@ -117,9 +143,13 @@ export default class Scene1 {
 
         stairs.material = materials
         
-        setTimeout(
-            () => {this.climbStairs(8)},
-        5000)
+        // setTimeout(
+        //     () => {this.climbStairs(8)},
+        // 5000)
+    }
+
+    test() {
+      console.log('played')
     }
 
     climbStairs(nbStairs) {
