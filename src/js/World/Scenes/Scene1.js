@@ -20,13 +20,17 @@ export default class Scene1 {
     }
 
     setupScene() {
-        this.stairs = this.assets.models['Ernest_1412H2140(2)'].scene
+        this.stairs = this.assets.models['Ernest_1412H1645'].scene
+
         this.stairs.scale.set(0.06, 0.06, 0.06)
         this.stairs.position.x = -60
         this.stairs.position.z = 36
         this.stairs.position.y = -4
         this.stairs.rotation.y = Math.PI/2
         this.container.add(this.stairs)
+
+        this.stairs.matrixAutoUpdate = false
+        this.stairs.updateMatrix()
 
         this.stairs.children[0].children.forEach(child => {
             if(child.material) child.material.roughness = .75
@@ -115,7 +119,7 @@ export default class Scene1 {
         
         setTimeout(
             () => {this.climbStairs(8)},
-        1000)
+        5000)
     }
 
     climbStairs(nbStairs) {
