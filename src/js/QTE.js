@@ -30,7 +30,6 @@ class QTE {
     initValues() {
         this.keys = []
         this.functionsEnd = []
-        console.log(this.keys)
 
         // init Styles
         this.pluralChoose[0].classList.remove('show')
@@ -40,7 +39,6 @@ class QTE {
     }
 
     newPluralChoose({ chooses, duration = 5, defaultChoose }) {
-        console.log(this.keys)
         if (this.keys.length > 0) {
             console.error('Attention mutltiplication QTE')
             return
@@ -85,8 +83,6 @@ class QTE {
 
         this.monoChoose.classList.add('show')
         this.monoChoose.querySelector('p').innerHTML = choose.text
-
-        console.log('New key down')
     }
 
     throttle(func, wait, leading, trailing, context) {
