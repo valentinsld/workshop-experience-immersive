@@ -20,8 +20,9 @@ import { cloneDeep } from 'lodash'
 
 import gsap from 'gsap'
 import { CustomEase } from 'gsap/CustomEase'
-
 gsap.registerPlugin(CustomEase)
+
+import QTE from '../../QTE';
 
 export default class Scene1 {
     constructor({ assets, time }) {
@@ -34,6 +35,33 @@ export default class Scene1 {
     }
 
     setupScene() {
+        // QTE.newMonoChoose({
+        //   choose: {
+        //       keyCode: " ",
+        //       text: 'Avancer vers la scene<br>Appuyez sur espace',
+        //       functionEnd: () => {
+        //         console.log('SPACE')
+        //       },
+        //     },
+        //     duration: 1,
+        // })
+
+        // QTE.newPluralChoose({     
+        //   chooses : [
+        //     {
+        //       keyCode: "Q",
+        //       text: 'Marcher sur les collages',
+        //       functionEnd: () => {console.log('Q')},
+        //     },{
+        //       keyCode: "D",
+        //       text: 'Esquivez les collages',
+        //       functionEnd: () => {console.log('D')},
+        //     }
+        //   ],
+        //   duration: 5,
+        //   defaultChoose: 0
+        // })
+
         this.stairs = this.assets.models['Ernest_1412H1645'].scene
         this.stairs.scale.set(0.06, 0.06, 0.06)
         this.stairs.position.x = -60
@@ -136,9 +164,13 @@ export default class Scene1 {
 
         App.scene.fog = new Fog(0x030B24, 1, 50)
         
-        setTimeout(
-            () => {this.climbStairs(8)},
-        1000)
+        // setTimeout(
+        //     () => {this.climbStairs(8)},
+        // 5000)
+    }
+
+    test() {
+      console.log('played')
     }
 
     createSmoke() {
