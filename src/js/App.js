@@ -39,7 +39,7 @@ export default class App {
     // Set background color
     this.renderer.setClearColor(0x000000, 1) // 0x050C2F
     // Set renderer pixel ratio & sizes
-    this.renderer.setPixelRatio(window.devicePixelRatio)
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     this.renderer.setSize(this.sizes.viewport.width, this.sizes.viewport.height)
     // Resize renderer on resize event
     this.sizes.on('resize', () => {

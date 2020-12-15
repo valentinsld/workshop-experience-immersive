@@ -20,7 +20,7 @@ export default class Scene1 {
     }
 
     setupScene() {
-        this.stairs = this.assets.models['Ernest_1412H2140(2)'].scene
+        this.stairs = this.assets.models['Ernest_1412H1645'].scene
         this.stairs.scale.set(0.06, 0.06, 0.06)
         this.stairs.position.x = -60
         this.stairs.position.z = 36
@@ -58,16 +58,16 @@ export default class Scene1 {
         
         this.spotLight.target = targetObject;
 
-        // rectLight Bis
-        const rectLightG = new RectAreaLight( 0x3A5DDE, 1,  20, 50 );
-        rectLightG.position.set( 3.3, 20, 0 );
-        rectLightG.rotation.set( 1.9, Math.PI, 0 );
-        this.container.add( rectLightG )
+        // // rectLight Bis
+        // const rectLightG = new RectAreaLight( 0x3A5DDE, 1,  20, 50 );
+        // rectLightG.position.set( 3.3, 20, 0 );
+        // rectLightG.rotation.set( 1.9, Math.PI, 0 );
+        // this.container.add( rectLightG )
 
-        // light for metro maps
-        const rectLight = new RectAreaLight( 0xffffff, .15,  8.42, 6 );
-        rectLight.position.set( -14.14, 3.410, 30.8 );
-        this.container.add( rectLight )
+        // // light for metro maps
+        // const rectLight = new RectAreaLight( 0xffffff, .15,  8.42, 6 );
+        // rectLight.position.set( -14.14, 3.410, 30.8 );
+        // this.container.add( rectLight )
 
         // init camera
         this.camera = App.camera.camera
@@ -106,16 +106,21 @@ export default class Scene1 {
           new MeshStandardMaterial({ map: texture3, transparent: true })
         ]
         stairs.geometry.clearGroups()
-        stairs.geometry.addGroup( 0, 2000, 0 )
-        stairs.geometry.addGroup( 0, 2000, 1 )
-        stairs.geometry.addGroup( 0, 2000, 2 )
-        stairs.geometry.addGroup( 0, 2000, 3 )
+        stairs.geometry.addGroup( 0, 1000, 0 )
+        stairs.geometry.addGroup( 0, 1000, 1 )
+        stairs.geometry.addGroup( 0, 1000, 2 )
+        stairs.geometry.addGroup( 0, 1000, 3 )
 
         stairs.material = materials
+
+        this.stairs.traverse(child => {
+          child.matrixAutoUpdate = false
+          child.updateMatrix()
+        })
         
-        setTimeout(
-            () => {this.climbStairs(8)},
-        1000)
+        // setTimeout(
+        //     () => {this.climbStairs(8)},
+        // 1000)
     }
 
     climbStairs(nbStairs) {
@@ -185,17 +190,11 @@ export default class Scene1 {
       //   // fragmentShader: require('@shaders/footstep.frag').default
       // } );
 
-      // /** @type Texture */
-      // this.assets.textures.banksy.wrapS = RepeatWrapping
-      // this.assets.textures.banksy.wrapT = RepeatWrapping
-      // this.assets.textures.banksy.mapping = EquirectangularReflectionMapping
-
       const material = new MeshStandardMaterial({
         map: this.assets.textures.footstep,
         transparent: true
       })
 
-      // const material = new MeshBasicMaterial( { color: 0x00ff00, side: DoubleSide } )
       const mesh = new Mesh( geometry, material );
       mesh.position.copy(position)
       mesh.rotation.copy(orientation)
