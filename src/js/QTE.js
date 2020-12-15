@@ -73,6 +73,10 @@ class QTE {
         })
     }
 
+    /**
+     * 
+     * @param {Function} choose.funtion the function to be fired at the key entered 
+     */
     newMonoChoose({ choose, duration = 1 }) {
         if (this.keys.length > 0) {
             console.error('Attention mutltiplication QTE')

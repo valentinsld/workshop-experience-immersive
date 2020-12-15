@@ -35,32 +35,8 @@ export default class Scene1 {
     }
 
     setupScene() {
-        // QTE.newMonoChoose({
-        //   choose: {
-        //       keyCode: " ",
-        //       text: 'Avancer vers la scene<br>Appuyez sur espace',
-        //       functionEnd: () => {
-        //         console.log('SPACE')
-        //       },
-        //     },
-        //     duration: 1,
-        // })
-
-        // QTE.newPluralChoose({     
-        //   chooses : [
-        //     {
-        //       keyCode: "Q",
-        //       text: 'Marcher sur les collages',
-        //       functionEnd: () => {console.log('Q')},
-        //     },{
-        //       keyCode: "D",
-        //       text: 'Esquivez les collages',
-        //       functionEnd: () => {console.log('D')},
-        //     }
-        //   ],
-        //   duration: 5,
-        //   defaultChoose: 0
-        // })
+        
+        this.regitserSceneActions()
 
         this.stairs = this.assets.models['Ernest_1412H1645'].scene
         this.stairs.scale.set(0.06, 0.06, 0.06)
@@ -114,11 +90,17 @@ export default class Scene1 {
         // init camera
         this.camera = App.camera.camera
         this.cameraContainer = App.camera.container
-        this.camera.position.z = 27
-        this.camera.position.y = 4.5
+        const camera = this.cameraInstance = App.camera
+
+        // init camera position
+        this.camera.position.set(
+          -16.05,
+          2.64,
+          40.8
+        )
+        this.cameraInstance.baseRotation.x = -0.4
 
         // raycast
-        const camera = this.cameraInstance = App.camera
         camera.raycaster = new Raycaster(
           camera.camera.position,
           new Vector3(0, -1, 0)
@@ -127,7 +109,6 @@ export default class Scene1 {
           camera.camera.position,
           new Vector3(0, -1, 0)
         ))
-        window.addEventListener('keypress', e => console.log(camera.raycaster.intersectObject(this.stairs.getObjectByName('Escalier'), true)))
 
         const stairs = this.stairs.getObjectByName('Escaliers_3')
 
@@ -163,10 +144,17 @@ export default class Scene1 {
         this.createSmoke()
 
         App.scene.fog = new Fog(0x030B24, 1, 50)
-        
-        // setTimeout(
-        //     () => {this.climbStairs(8)},
-        // 5000)
+    }
+
+    regitserSceneActions() {
+      QTE.newMonoChoose({
+        choose: {
+            keyCode: " ",
+            text: 'Avancer vers la scene<br>Appuyez sur espace',
+            functionEnd: this.goToStairs,
+          },
+          duration: 1,
+      })
     }
 
     test() {
@@ -210,6 +198,56 @@ export default class Scene1 {
 
       smokeContainer.position.set(0, 10, -5)
       this.container.add(smokeContainer)
+    }
+
+    goToStairs = () => {
+      gsap.to(this.camera.position, {
+        x: 0.44, y: 4.012, z: 39.4,
+        duration: 2.5,
+        ease: 'power1.inOut'
+      })
+      this.cameraInstance.baseRotation.x = 0
+
+      QTE.newPluralChoose({     
+        chooses : [
+          {
+            keyCode: "Q",
+            text: 'Marcher sur les collages',
+            functionEnd: () => {
+              this.turnLeft()
+              this.climbStairs(3)
+            },
+          },{
+            keyCode: "D",
+            text: 'Esquivez les collages',
+            functionEnd: () => {
+              this.turnRight()
+              this.climbStairs(3)
+            },
+          }
+        ],
+        duration: 5,
+        defaultChoose: 0
+      })
+
+    }
+
+    turnLeft() {
+      this.cameraInstance.baseRotation.x = 0.4
+      gsap.to(this.camera.position, {
+        x: -0.5,
+        duration: 0.8,
+        onComplete: () => this.cameraInstance.baseRotation.x = 0
+      })
+    }
+
+    turnLeft() {
+      this.cameraInstance.baseRotation.x = 0.4
+      gsap.to(this.camera.position, {
+        x: -0.5,
+        duration: 0.8,
+        onComplete: () => this.cameraInstance.baseRotation.x = -0.4
+      })
     }
 
     climbStairs(nbStairs) {

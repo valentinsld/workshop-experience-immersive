@@ -14,6 +14,8 @@ export default class Camera {
     this.container = new Object3D()
     this.container.name = 'Camera'
 
+    this.baseRotation = { x: 0, y: 0, z: 0 }
+
     // inspired from PointerLockControls
     this.euler = new Euler(0, 0, 0, 'YXZ')
     this.eulerStack = { x: 0, y: 0 }
@@ -22,8 +24,8 @@ export default class Camera {
 
     window.addEventListener('mousemove', e => {
       const correctionX = this.baseCursorPosition.x - (window.innerWidth/2)
-      this.eulerStack.y = -((e.clientX - window.innerWidth/2)) * 0.0002
-      this.eulerStack.x = -(e.clientY - window.innerHeight/2) * 0.0002
+      this.eulerStack.y = -((e.clientX - window.innerWidth/2)) * 0.0002 + this.baseRotation.x
+      this.eulerStack.x = -(e.clientY - window.innerHeight/2) * 0.0002 + + this.baseRotation.y
       if (this.animation) this.animation.kill()
       this.animation = gsap.to(this.euler, {
         y: this.eulerStack.y,
@@ -38,7 +40,7 @@ export default class Camera {
     })
 
     this.setCamera()
-    this.setPosition()
+    // this.setPosition()
     this.setOrbitControls()
   }
   setCamera() {
@@ -58,12 +60,12 @@ export default class Camera {
       this.camera.updateProjectionMatrix()
     })
   }
-  setPosition() {
-    // Set camera position
-    this.camera.position.x = 0
-    this.camera.position.y = 1
-    this.camera.position.z = 5
-  }
+  // setPosition() {
+  //   // Set camera position
+  //   this.camera.position.x = 0
+  //   this.camera.position.y = 1
+  //   this.camera.position.z = 5
+  // }
   setOrbitControls() {
     // Set orbit control
     this.orbitControls = new OrbitControls(
