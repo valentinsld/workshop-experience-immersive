@@ -200,7 +200,9 @@ export default class Scene1 {
       this.container.add(smokeContainer)
     }
 
-    goToStairs = () => {
+    goToStairs = (beforeCall) => {
+      beforeCall()
+
       gsap.to(this.camera.position, {
         x: 0.44, y: 4.012, z: 39.4,
         duration: 2.5,
@@ -208,31 +210,38 @@ export default class Scene1 {
       })
       this.cameraInstance.baseRotation.x = 0
 
+      this.createStairsChoice()
+    }
+
+    createStairsChoice() {
       QTE.newPluralChoose({     
         chooses : [
           {
             keyCode: "Q",
             text: 'Marcher sur les collages',
-            functionEnd: () => {
+            functionEnd: (beforeCall) => {
+              beforeCall()
               this.turnLeft()
               this.climbStairs(3)
+              this.createStairsChoice()
             },
           },{
             keyCode: "D",
             text: 'Esquivez les collages',
-            functionEnd: () => {
+            functionEnd: (beforeCall) => {
+              beforeCall()
               this.turnRight()
               this.climbStairs(3)
+              this.createStairsChoice()
             },
           }
         ],
         duration: 5,
         defaultChoose: 0
       })
-
     }
 
-    turnLeft() {
+    turnLeft = () => {
       this.cameraInstance.baseRotation.x = 0.4
       gsap.to(this.camera.position, {
         x: -0.5,
@@ -241,12 +250,12 @@ export default class Scene1 {
       })
     }
 
-    turnLeft() {
-      this.cameraInstance.baseRotation.x = 0.4
+    turnRight = () => {
+      this.cameraInstance.baseRotation.x = -0.4
       gsap.to(this.camera.position, {
         x: -0.5,
         duration: 0.8,
-        onComplete: () => this.cameraInstance.baseRotation.x = -0.4
+        onComplete: () => this.cameraInstance.baseRotation.x = 0
       })
     }
 
@@ -304,7 +313,7 @@ export default class Scene1 {
 
     createFootstep(stepIndex) {
       const stairs = this.stairs.getObjectByName('Escaliers_3')
-      const position = this.cameraInstance.raycaster.intersectObject(stairs, true)[0].point
+      const position = this.cameraInstance?.raycaster.intersectObject(stairs, true)?.[0].point
       const orientation = new Euler(-Math.PI/2, 0, 0)
       const size = new Vector3(2, 1.2, 200)
       // const geometry = new DecalGeometry( stairs, position, orientation , size );
