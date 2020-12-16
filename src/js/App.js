@@ -1,6 +1,8 @@
-import { Scene, WebGLRenderer, Color } from 'three'
+import { Scene, WebGLRenderer, Color, Fog } from 'three'
+import { WebGLRenderTarget } from '../lib/SSAOShader'
+import SSAOShader from '../lib/SSAOShader'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
-import { SSAOPass } from 'three/examples/jsm/postprocessing/SSAOPass.js';
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 
 import * as dat from 'dat.gui'
 import Stats from 'stats-js'
@@ -74,11 +76,29 @@ export default class App {
     /////////////////////////
     this.composer = new EffectComposer( this.renderer );
 
-    const ssaoPass = new SSAOPass( this.scene, this.camera.camera, this.sizes.viewport.width, this.sizes.viewport.height );
-    ssaoPass.kernelRadius = 14;
-    ssaoPass.minDistance = 0.0025
-    ssaoPass.maxDistance = 0.1
-    this.composer.addPass( ssaoPass );
+    const effectSSAO = new ShaderPass( SSAOShader );
+    // const ssaoPass = new SSAOPass( this.scene, this.camera.camera, this.sizes.viewport.width, this.sizes.viewport.height );
+    // ssaoPass.kernelRadius = 10;
+    // ssaoPass.minDistance = 0.005
+    // ssaoPass.maxDistance = 0.05
+    // this.composer.addPass( ssaoPass );
+    this.composer.addPass( effectSSAO );
+
+    this.scene.fog = new Fog(0x030B24, 1, 50)
+
+    const renderTargetParametersRGBA = { minFilter: 1006, magFilter: 1006, format: 1021 };
+    const depthTarget = new WebGLRenderTarget( window.innerWidth, window.innerHeight, renderTargetParametersRGBA );
+    const WIDTH = window.innerWidth
+    const HEIGHT = window.innerHeight
+    effectSSAO.uniforms[ 'tDepth' ].value = depthTarget;
+    effectSSAO.uniforms[ 'size' ].value.set( WIDTH, HEIGHT );
+    effectSSAO.uniforms[ 'cameraNear' ].value = this.camera.near;
+    effectSSAO.uniforms[ 'cameraFar' ].value = this.camera.far;
+    effectSSAO.uniforms[ 'fogNear' ].value = this.scene.fog.near;
+    effectSSAO.uniforms[ 'fogFar' ].value = this.scene.fog.far;
+    effectSSAO.uniforms[ 'fogEnabled' ].value = 0;
+    effectSSAO.uniforms[ 'aoClamp' ].value = 0.5;
+    effectSSAO.material.defines = { "RGBA_DEPTH": true, "ONLY_AO_COLOR": "1.0, 0.7, 0.5" };
 
   }
   setWorld() {
