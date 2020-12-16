@@ -1,7 +1,27 @@
-#qte 
+#QTE
     pointer-events: none
     color var(--grey)
+    width 100vw
+    height 100vh
+    position absolute
+    display flex
+    justify-content center
+    align-items center
+    transition: background-color 300ms ease-out
 
+#question
+    opacity 0
+    transform translateY(0)
+    transition: opacity 300ms ease-out, transform 600ms ease-out
+    will-change opacity, transform
+    text-align: center;
+    font: normal normal normal 24px/38px Open Sans;
+    letter-spacing: 0px;
+    color: #FFFFFF;
+    width 37%
+
+.transparent
+    opacity 0.3 !important
 
 #pluralChoose__one,
 #pluralChoose__two
