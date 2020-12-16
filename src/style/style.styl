@@ -1,6 +1,5 @@
-@font-face
-  src url('@fonts/Montserrat-Regular.ttf')
-  font-family Montserrat
+@import 'https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap'
+@import '../fonts/stylesheet.css'
 
 @import './common.styl'
 @import './loading.styl'
@@ -8,8 +7,11 @@
 @import './endScene.styl'
 
 :root 
-  --white : #fff
+  --white #fff
+  --grey #C5CBF4 // #7D82A7
+  --serpiente 'Serpiente Display Display'
 
 html {
   color var(--white)
+  font-family: 'Open Sans', sans-serif
 }

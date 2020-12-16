@@ -387,9 +387,10 @@ export default class Scene1 {
             tl.to(words, {
                 y: 0,
                 opacity: 1,
-                stagger: 0.06,
-                ease: "Power3.out",
-            })
+                duration: .7,
+                stagger: .15,
+                ease: "Power2.inOut",
+            }, '-=.1')
             .to(step, {
               delay: words.length * 0.3,
               opacity: 0,

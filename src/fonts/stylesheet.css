@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'Serpiente Display Display';
+    src: url('Serpiente-Display-Medium.woff2') format('woff2'),
+        url('Serpiente-Display-Medium.woff') format('woff');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
