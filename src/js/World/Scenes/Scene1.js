@@ -250,7 +250,7 @@ export default class Scene1 {
           functionEnd: (beforeCall) => {
             if(beforeCall) beforeCall()
             this.state.side = 0
-            this.state.hasWalkedOver = this.state.walkOverStatuses ?? walkOverStatuses[0]
+            this.state.hasWalkedOver = this.state.hasWalkedOver ?? walkOverStatuses[0]
             this.turnLeft()
             this.climbStairs(this.state.step === 2 ? 3 : 4).then(() => {
               if(this.state.step < 3) this.createStairsChoice(duration, !reversed)
@@ -264,7 +264,7 @@ export default class Scene1 {
           functionEnd: (beforeCall) => {
             if(beforeCall) beforeCall()
             this.state.side = 1
-            this.state.hasWalkedOver = this.state.walkOverStatuses ?? walkOverStatuses[1]
+            this.state.hasWalkedOver = this.state.hasWalkedOver ?? walkOverStatuses[1]
             this.turnRight()
             this.climbStairs(this.state.step === 2 ? 3 : 4).then(() => {
               if(this.state.step < 3) this.createStairsChoice(duration, !reversed)
@@ -427,7 +427,7 @@ export default class Scene1 {
     }
 
     endScene(end = 0) {
-        const el = document.getElementById(`endScene1`)
+        const el = document.getElementById(`endScene${end+1}`)
         const steps = el.querySelectorAll('.endScene__step')
         el.style.display = 'block'
 
