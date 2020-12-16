@@ -14,6 +14,7 @@ import {
     MeshLambertMaterial,
     Group,
     Fog,
+    Quaternion,
 } from 'three'
 import { DecalGeometry } from 'three/examples/jsm/geometries/DecalGeometry'
 
@@ -209,53 +210,63 @@ export default class Scene1 {
     goToStairs = (beforeCall) => {
       if(beforeCall) beforeCall()
 
-      const tl = gsap.timeline().play(-.8)
-
-      tl.to(this.camera.position, {
-        x: 0.44, y: 4.012, z: 39.4,
-        duration: 2.5,
-        ease: 'power1.in'
-      }).to(this.camera.position, {
-        z: 32.5,
-        duration: 2.5,
-        ease: 'power1.out'
+      gsap.to(this.camera.position, {
+        x: 0.5,
+        duration: 5,
+        ease: 'power2.out'
       })
+      gsap.to(this.camera.position, {
+        z: 28.5,
+        duration: 4,
+        ease: 'power2.inOut'
+      })
+
       this.cameraInstance.baseRotation.x = 0
 
       setTimeout(() => {
         this.createStairsChoice(5)
+        gsap.to(this.cameraInstance.baseRotation, { y: -.4 })
       }, 4000)
     }
 
-    createStairsChoice(duration = 7) {
-      QTE.newPluralChoose({     
-        chooses : [
-          {
-            keyCode: "Q",
-            text: 'Marcher sur les collages',
-            functionEnd: (beforeCall) => {
-              if(beforeCall) beforeCall()
-              this.state.side = 0
-              this.turnLeft()
-              const climbingEnded = this.climbStairs(4)
-              if(this.state.step < 2) this.createStairsChoice()
-              else climbingEnded.then(() => this.center())
-              this.state.step++
-            },
-          },{
-            keyCode: "D",
-            text: 'Esquivez les collages',
-            functionEnd: (beforeCall) => {
-              if(beforeCall) beforeCall()
-              this.state.side = 1
-              this.turnRight()
-              const climbingEnded = this.climbStairs(4)
-              if(this.state.step < 2) this.createStairsChoice()
-              else climbingEnded.then(() => this.center())
-              this.state.step++
-            },
-          }
-        ],
+    createStairsChoice(duration = 5, reversed = false) {
+
+      const labels = ['Marcher sur les collages', 'Esquiver les collages']
+
+      if (reversed) labels.reverse()
+
+      const chooses = [
+        {
+          keyCode: "Q",
+          text: labels[0],
+          functionEnd: (beforeCall) => {
+            if(beforeCall) beforeCall()
+            this.state.side = 0
+            this.turnLeft()
+            this.climbStairs(this.state.step === 2 ? 3 : 4).then(() => {
+              if(this.state.step < 3) this.createStairsChoice(duration, !reversed)
+              else this.center()
+            })
+            this.state.step++
+          },
+        },{
+          keyCode: "D",
+          text: labels[1],
+          functionEnd: (beforeCall) => {
+            if(beforeCall) beforeCall()
+            this.state.side = 1
+            this.turnRight()
+            this.climbStairs(this.state.step === 2 ? 3 : 4).then(() => {
+              if(this.state.step < 3) this.createStairsChoice(duration, !reversed)
+              else this.center()
+            })
+            this.state.step++
+          },
+        }
+      ]
+
+      QTE.newPluralChoose({ 
+        chooses,
         duration,
         defaultChoose: this.state.side
       })
@@ -280,12 +291,29 @@ export default class Scene1 {
     }
 
     center() {
-      console.log('centered');
       gsap.to(this.camera.position, {
         x: 1.5,
         duration: 0.8,
-        onComplete: () => this.cameraInstance.baseRotation.x = 0
+        onComplete: () => {
+          this.cameraInstance.baseRotation.x = 0
+          this.cameraInstance.baseRotation.y = 0
+          this.lockCamera()
+        }
       })
+    }
+
+    lockCamera() {
+      const newQuaternion = this.camera.quaternion.clone()
+      newQuaternion.setFromEuler( new Euler(0, 0, 0, 'YXZ') )
+      gsap.to(this.camera?.quaternion, {
+        x: newQuaternion.x,
+        y: newQuaternion.y,
+        z: newQuaternion.z,
+        w: newQuaternion.w,
+        duration: 1.5,
+        ease: 'power2.out'
+      })
+      this.cameraInstance.locked = true
     }
 
     climbStairs(nbStairs) {
@@ -297,7 +325,7 @@ export default class Scene1 {
   
             // init camera position rotation
             gsap.to(this.camera.rotation, {
-              x: 0,
+              // x: 0,
               y: 0,
               z: 0,
               ease: "power1.inOut",
@@ -332,7 +360,7 @@ export default class Scene1 {
         }
   
         gsap.to(this.cameraContainer.rotation, {
-          x: 0,
+          // x: 0,
           y: 0,
           z: 0,
           ease: "power1.inOut",
