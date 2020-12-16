@@ -66,6 +66,9 @@
     width 0
     background var(--white)
 
+#monoChoose div 
+    text-align center
+
 
 #pluralChoose__one.show,
 #pluralChoose__two.show,
@@ -79,3 +82,17 @@
     min-width: 23px;
     border 1px solid var(--grey)
     border-radius 10px
+
+    transition: all 300ms ease-out
+
+
+#monoChoose.clicked,
+#pluralChoose__one.clicked,
+#pluralChoose__two.clicked
+    transition: all 300ms ease-out 300ms
+
+#monoChoose.clicked .chooseLetter,
+#pluralChoose__one.clicked .chooseLetter ,
+#pluralChoose__two.clicked .chooseLetter 
+    background var(--grey)
+    color var(--blue)

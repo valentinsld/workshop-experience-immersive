@@ -157,7 +157,7 @@ export default class Scene1 {
       QTE.newMonoChoose({
         choose: {
             keyCode: " ",
-            text: 'Avancer vers la scene<br>Appuyez sur espace',
+            text: '<p>Se déplacer devant l’oeuvre</p><div class="chooseLetter">Espace</div>',
             functionEnd: this.goToStairs,
           },
           duration: 1,
