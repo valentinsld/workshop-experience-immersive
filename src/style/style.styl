@@ -23,12 +23,17 @@ html {
   font-weight: 400
 
   background-color: var(--blue)
+
+  // cursor none!important
 }
 
 ::selection
   background-color var(--grey)
   color var(--blue)
 
+
+//  Links
+////////////////
 .link 
   position relative
   cursor pointer
@@ -67,3 +72,32 @@ html {
 
 .link:hover::before   
   transform scaleX(1)
+
+//  Cursor
+//////////////
+#cursor,
+#cursorS {
+  pointer-events: none
+  border-radius: 100px;
+  opacity: 0.8;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+  z-index: 1050;
+
+  transition: transform 300ms ease;
+}
+#cursor {
+  background: #e6e8f7;
+  width: 20px;
+  height: 20px;
+}
+#cursorS {
+  width: 50px;
+  height: 50px;
+
+  border: 1px solid #e6e8f7;
+}
