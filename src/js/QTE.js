@@ -16,12 +16,14 @@ class QTE {
 
         window.addEventListener('keypress', (ev) => {
             if (this.keys.length == 1) {
+                this.resetProgress()
                 this.functionsEnd[0](this.initValues)
                 return
             }
 
             const t = this.keys.indexOf(ev.key.toUpperCase())
             if ( t >= 0) {
+                this.resetProgress()
                 this.functionsEnd[t](this.initValues)
             }
         })
@@ -57,18 +59,18 @@ class QTE {
             pluralElmenet.querySelector('div').innerHTML = keyCode
         })
 
-        console.log(this.keys)
+        
 
         this.pluralChooseBar.classList.add('show')
-        gsap.to(this.pluralChooseBar.querySelector('.line'), {
+        this.stackedAnimation = gsap.to(this.pluralChooseBar.querySelector('.line'), {
             width: '100%',
             duration: duration,
             delay: 1,
             ease: 'linear',
             onComplete: () => {
                 if (this.keys.length == 0) return
-                this.functionsEnd[defaultChoose].call()
-                // this.initValues()
+                this.resetProgress()
+                this.functionsEnd[defaultChoose](this.initValues)
             },
         })
     }
@@ -89,6 +91,11 @@ class QTE {
 
         this.monoChoose.classList.add('show')
         this.monoChoose.querySelector('p').innerHTML = choose.text
+    }
+
+    resetProgress() {
+        this.stackedAnimation?.kill()
+        this.pluralChooseBar.querySelector('.line').style.width = `0%`
     }
 
     throttle(func, wait, leading, trailing, context) {

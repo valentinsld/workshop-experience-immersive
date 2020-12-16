@@ -14,7 +14,7 @@ export default class Camera {
     this.container = new Object3D()
     this.container.name = 'Camera'
 
-    this.baseRotation = { x: 0, y: 0, z: 0 }
+    this.baseRotation = { x: -0.4, y: 0, z: 0 }
 
     // inspired from PointerLockControls
     this.euler = new Euler(0, 0, 0, 'YXZ')
@@ -23,16 +23,7 @@ export default class Camera {
     this.euler.setFromQuaternion( this.container.quaternion )
 
     window.addEventListener('mousemove', e => {
-      const correctionX = this.baseCursorPosition.x - (window.innerWidth/2)
-      this.eulerStack.y = -((e.clientX - window.innerWidth/2)) * 0.0002 + this.baseRotation.x
-      this.eulerStack.x = -(e.clientY - window.innerHeight/2) * 0.0002 + + this.baseRotation.y
-      if (this.animation) this.animation.kill()
-      this.animation = gsap.to(this.euler, {
-        y: this.eulerStack.y,
-        x: this.eulerStack.x,
-        duration: 2.5,
-        ease: "power4.easeOut"
-      })
+      this.moveCamera(e)
     })
     
     this.time.on('tick', () => {
@@ -58,7 +49,20 @@ export default class Camera {
         this.sizes.viewport.width / this.sizes.viewport.height
       // Call this method because of the above change
       this.camera.updateProjectionMatrix()
+      this.moveCamera()
     })
+  }
+  moveCamera(e) {
+    const clientX = e.clientX ?? 0, clientY = e.clientY ?? 0
+    this.eulerStack.y = -((clientX - window.innerWidth/2)) * 0.0002 + this.baseRotation.x
+      this.eulerStack.x = -(clientY - window.innerHeight/2) * 0.0002 + + this.baseRotation.y
+      if (this.animation) this.animation.kill()
+      this.animation = gsap.to(this.euler, {
+        y: this.eulerStack.y,
+        x: this.eulerStack.x,
+        duration: 2.5,
+        ease: "power4.easeOut"
+      })
   }
   // setPosition() {
   //   // Set camera position

@@ -34,6 +34,8 @@ export default class Scene1 {
         this.container = new Object3D()
         this.setupScene()
         App.scene.add(this.container)
+
+        this.state = { step: 0, side: 0 }
     }
 
     setupScene() {
@@ -107,14 +109,11 @@ export default class Scene1 {
 
         // raycast
         camera.raycaster = new Raycaster(
-            camera.camera.position,
-            new Vector3(0, -1, 0)
-        )
-        camera.time.on('tick', () =>
-            camera.raycaster.set(camera.camera.position, new Vector3(0, -1, 0))
+          new Vector3(camera.camera.position.x, camera.camera.position.y, camera.camera.position.z + 0.2),
+          new Vector3(0, -1, 0)
         )
         camera.time.on('tick', () => camera.raycaster.set(
-          camera.camera.position,
+          new Vector3(camera.camera.position.x, camera.camera.position.y, camera.camera.position.z + 0.2),
           new Vector3(0, -1, 0)
         ))
 
@@ -208,43 +207,57 @@ export default class Scene1 {
     }
 
     goToStairs = (beforeCall) => {
-      beforeCall()
+      if(beforeCall) beforeCall()
 
-      gsap.to(this.camera.position, {
+      const tl = gsap.timeline().play(-.8)
+
+      tl.to(this.camera.position, {
         x: 0.44, y: 4.012, z: 39.4,
         duration: 2.5,
-        ease: 'power1.inOut'
+        ease: 'power1.in'
+      }).to(this.camera.position, {
+        z: 32.5,
+        duration: 2.5,
+        ease: 'power1.out'
       })
       this.cameraInstance.baseRotation.x = 0
 
-      this.createStairsChoice()
+      setTimeout(() => {
+        this.createStairsChoice(5)
+      }, 4000)
     }
 
-    createStairsChoice() {
+    createStairsChoice(duration = 7) {
       QTE.newPluralChoose({     
         chooses : [
           {
             keyCode: "Q",
             text: 'Marcher sur les collages',
             functionEnd: (beforeCall) => {
-              beforeCall()
+              if(beforeCall) beforeCall()
+              this.state.side = 0
               this.turnLeft()
-              this.climbStairs(3)
-              this.createStairsChoice()
+              const climbingEnded = this.climbStairs(4)
+              if(this.state.step < 2) this.createStairsChoice()
+              else climbingEnded.then(() => this.center())
+              this.state.step++
             },
           },{
             keyCode: "D",
             text: 'Esquivez les collages',
             functionEnd: (beforeCall) => {
-              beforeCall()
+              if(beforeCall) beforeCall()
+              this.state.side = 1
               this.turnRight()
-              this.climbStairs(3)
-              this.createStairsChoice()
+              const climbingEnded = this.climbStairs(4)
+              if(this.state.step < 2) this.createStairsChoice()
+              else climbingEnded.then(() => this.center())
+              this.state.step++
             },
           }
         ],
-        duration: 5,
-        defaultChoose: 0
+        duration,
+        defaultChoose: this.state.side
       })
     }
 
@@ -260,70 +273,73 @@ export default class Scene1 {
     turnRight = () => {
       this.cameraInstance.baseRotation.x = -0.4
       gsap.to(this.camera.position, {
-        x: -0.5,
+        x: 4.5,
+        duration: 0.8,
+        onComplete: () => this.cameraInstance.baseRotation.x = 0
+      })
+    }
+
+    center() {
+      console.log('centered');
+      gsap.to(this.camera.position, {
+        x: 1.5,
         duration: 0.8,
         onComplete: () => this.cameraInstance.baseRotation.x = 0
       })
     }
 
     climbStairs(nbStairs) {
+      return new Promise((resolve, reject) => {
         const EaseY = CustomEase.create(
-            'custom',
-            'M0,0 C0.134,0.022 0.524,1.027 0.856,1.028 0.92,1.028 0.96,1.01 1,1 '
+          'custom',
+          'M0,0 C0.134,0.022 0.524,1.027 0.856,1.028 0.92,1.028 0.96,1.01 1,1 '
         )
-
-        // init camera position rotation
-        gsap.to(this.camera.rotation, {
-            x: 0,
-            y: 0,
-            z: 0,
-            ease: 'power1.inOut',
-            duration: 1.2,
-        })
-
-        let tl = gsap.timeline().play(-0.8)
-
+  
+            // init camera position rotation
+            gsap.to(this.camera.rotation, {
+              x: 0,
+              y: 0,
+              z: 0,
+              ease: "power1.inOut",
+              duration: 1.2,
+            })
+  
+        let tl = gsap.timeline().play(-.8)
+  
         for (let i = 0; i < nbStairs; i++) {
             const mult = i % 2 == 0 ? -1 : 1
-
-            tl.to(this.camera.position, {
-                y: '+=1',
-                ease: EaseY,
-                duration: 1,
-            })
-                .to(
-                    this.camera.position,
-                    {
-                        z: '-=2.05',
-                        ease: 'linear',
-                        duration: 1,
-                    },
-                    '-=1'
-                )
-                .to(
-                    this.cameraContainer.rotation,
-                    {
-                        x: -0.02 * mult,
-                        y: 0.01,
-                        z: 0.01 * mult,
-                        ease: 'linear',
-                        duration: 1,
-                        onComplete: () => this.createFootstep(i),
-                    },
-                    '-=1'
-                )
+            
+          tl.to(this.camera.position, {
+            y: '+=1',
+            ease: EaseY,
+            duration: 1,
+          }).to(this.camera.position, {
+            z: "-=2.05",
+            ease: "linear",
+            duration: 1,
+          }, "-=1")
+          .to(this.cameraContainer.rotation, {
+            x: -0.02 * mult,
+            y: 0.01,
+            z: 0.01 * mult,
+            ease: "linear",
+            duration: 1,
+            onComplete: () => {
+              this.createFootstep(i)
+              if (i === nbStairs - 1) resolve()
+            }
+          }, "-=1")
         }
-
-        console.log('played')
-
+  
         gsap.to(this.cameraContainer.rotation, {
-            x: 0,
-            y: 0,
-            z: 0,
-            ease: 'power1.inOut',
-            delay: nbStairs,
-            duration: 1.2,
+          x: 0,
+          y: 0,
+          z: 0,
+          ease: "power1.inOut",
+          delay: nbStairs,
+          duration: 1.2,
         })
+      })
     }
 
     createFootstep(stepIndex) {
