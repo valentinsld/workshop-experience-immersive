@@ -35,7 +35,7 @@ export default class World {
 
     if (this.assets.total === 0) {
       this.init()
-      this.loadDiv.remove()
+      // this.loadDiv.remove()
     } else {
       this.assets.on('ressourceLoad', () => {
         this.progress.style.width = this.loadModels.innerHTML = `${
@@ -47,10 +47,10 @@ export default class World {
       this.assets.on('ressourcesReady', () => {
         setTimeout(() => {
           this.init()
-          this.loadDiv.style.opacity = 0
-          setTimeout(() => {
-            this.loadDiv.remove()
-          }, 550)
+          // this.loadDiv.style.opacity = 0
+          // setTimeout(() => {
+          //   this.loadDiv.remove()
+          // }, 550)
         }, 1000)
       })
     }
