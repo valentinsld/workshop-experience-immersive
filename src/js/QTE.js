@@ -18,6 +18,10 @@ class QTE {
             if (this.keys.length == 1) {
                 this.resetProgress()
                 this.functionsEnd[0](this.initValues)
+                this.monoChoose.classList.add('clicked')
+                setTimeout(() => {
+                    this.monoChoose.classList.remove('clicked')
+                }, 1000)
                 return
             }
 
@@ -25,6 +29,10 @@ class QTE {
             if ( t >= 0) {
                 this.resetProgress()
                 this.functionsEnd[t](this.initValues)
+                this.pluralChoose[t].classList.add('clicked')
+                setTimeout(() => {
+                    this.pluralChoose[t].classList.remove('clicked')
+                }, 1000)
             }
         })
     }
@@ -90,7 +98,7 @@ class QTE {
         this.functionsEnd = [choose.functionEnd]
 
         this.monoChoose.classList.add('show')
-        this.monoChoose.querySelector('p').innerHTML = choose.text
+        this.monoChoose.querySelector('div').innerHTML = choose.text
     }
 
     resetProgress() {

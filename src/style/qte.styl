@@ -1,6 +1,6 @@
-#qte {
+#qte 
     pointer-events: none
-}
+    color var(--grey)
 
 
 #pluralChoose__one,
@@ -8,7 +8,8 @@
     position absolute
     top: 50%
     transform translate3D(0, -50%, 0)
-    margin 50px
+    margin-left 7vw
+    margin-right 7vw
 
     text-align center
 
@@ -29,7 +30,7 @@
     transform translate3D(-50%, -50%, 0)
     margin-bottom 50px
 
-    min-width 500px
+    min-width 400px
     text-align center
 
     opacity 0
@@ -37,8 +38,19 @@
 #pluralChoose__bar .line 
     height 5px
     width 0
-    background var(--white)
+    background #8F95C4
 
+#pluralChoose__bar .line:after
+    content ''
+    position absolute
+    z-index -1
+    top 0
+    left 0
+    width 100%
+    height 5px
+
+    background-color: #6E6D8B
+    opacity .5 
 
 #monoChoose 
     position absolute
@@ -54,9 +66,33 @@
     width 0
     background var(--white)
 
+#monoChoose div 
+    text-align center
+
 
 #pluralChoose__one.show,
 #pluralChoose__two.show,
 #pluralChoose__bar.show,
 #monoChoose.show
     opacity 1
+
+.chooseLetter 
+    display inline-block
+    padding 8px
+    min-width: 23px;
+    border 1px solid var(--grey)
+    border-radius 10px
+
+    transition: all 300ms ease-out
+
+
+#monoChoose.clicked,
+#pluralChoose__one.clicked,
+#pluralChoose__two.clicked
+    transition: all 300ms ease-out 300ms
+
+#monoChoose.clicked .chooseLetter,
+#pluralChoose__one.clicked .chooseLetter ,
+#pluralChoose__two.clicked .chooseLetter 
+    background var(--grey)
+    color var(--blue)
