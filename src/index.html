@@ -1,70 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon">
-    <title>THREE.js Template</title>
-</head>
-<body>
-    <div class="loadScreen">
-      <h1>shredding street art</h1>
-      <p class="loadScreen__subtitle">Une histoire de vie et de mort du street art</p>
-      <h3 class="load">0%</h3>
-      <div class="progressBar">
-        <div class="progress"></div>
-      </div>
-      <p class="useCasque">Pour une meilleure expérience, l’usage du casque est recommandé</p>
-    </div>
-
-    <div id="QTE">
-      <div class="pluralChoose">
-        <div id="pluralChoose__one">
-          <p></p>
-          <div class="chooseLetter"></div>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon" />
+        <title>THREE.js Template</title>
+    </head>
+    <body>
+        <div class="loadScreen">
+            <h1>shredding street art</h1>
+            <p class="loadScreen__subtitle">
+                Une histoire de vie et de mort du street art
+            </p>
+            <h3 class="load">0%</h3>
+            <div class="progressBar">
+                <div class="progress"></div>
+            </div>
+            <p class="useCasque">
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="13" viewBox="0 0 15 13">
+                <g id="XMLID_791_" transform="translate(0 -19.242)">
+                  <path id="XMLID_792_" d="M13.636,26.224v-.961A6.086,6.086,0,0,0,7.5,19.242a6.086,6.086,0,0,0-6.136,6.02v.961A3.321,3.321,0,0,0,0,28.9a3.381,3.381,0,0,0,3.409,3.345.675.675,0,0,0,.682-.669V26.222a.675.675,0,0,0-.682-.669,3.472,3.472,0,0,0-.682.067v-.358A4.734,4.734,0,0,1,7.5,20.58a4.734,4.734,0,0,1,4.773,4.682v.358a3.472,3.472,0,0,0-.682-.067.675.675,0,0,0-.682.669v5.351a.675.675,0,0,0,.682.669A3.381,3.381,0,0,0,15,28.9,3.321,3.321,0,0,0,13.636,26.224Z" transform="translate(0 0)" fill="var(--grey)"/>
+                </g>
+              </svg>
+                Pour une meilleure expérience, l’usage du casque est recommandé
+            </p>
         </div>
-        <div id="pluralChoose__two">
-          <p></p>
-          <div class="chooseLetter"></div>
+
+        <div id="globalContent">
+
         </div>
-        <div id="pluralChoose__bar">
-          <div class="line"></div>
-          <p>Utilisez votre clavier pour faire un choix</p>
+
+        <div id="QTE">
+            <div class="pluralChoose">
+                <div id="pluralChoose__one">
+                    <p></p>
+                    <div class="chooseLetter"></div>
+                </div>
+                <div id="pluralChoose__two">
+                    <p></p>
+                    <div class="chooseLetter"></div>
+                </div>
+                <div id="pluralChoose__bar">
+                    <div class="line"></div>
+                    <p>Utilisez votre clavier pour faire un choix</p>
+                </div>
+            </div>
+            <div id="monoChoose">
+                <div></div>
+                <span class="line"></span>
+            </div>
         </div>
-      </div>
-      <div id="monoChoose">
-        <div></div>
-        <span class="line"></span>
-      </div>
-    </div>
 
-    <div>
-      <div class="endScene" id="endScene1">
-        <p class="endScene__step">
-          Vous avez fait le choix conforme à ce qui était prévu par l’artiste.
-        </p>
-        <p class="endScene__step">
-          En piétinant l’oeuvre, et donc les cadavres qu’Ernest Pignon-Ernest représente, vous êtes 
-          pris d’un sentiment de malaise.
-        </p>
-        <p class="endScene__step">
-          C’est le but de l’artiste que de vous faire ressentir une gêne désagréable, vous permettant de mesurer la violence de la répression qu’ont subit les Communards durant la Semaine Sanglante.
-        </p>
-      </div>
-      <div class="endScene" id="endScene2">
-        <p class="endScene__step1">
+        <div id="chapter1">
+            <h2 class="chapter1__title">Le street art est mort, <br>
+              vive le street art !</h2>
+            <p class="chapter1__text">
+                Depuis la fin du XXe siècle, les rues des villes se couvrent de
+                messages, de graffitis, de collages. S’il est initialement
+                sauvage, voire vandale, la tendance est d’institutionnaliser cet
+                art urbain, et il trouve peu à peu sa place dans les galeries et
+                les salles de vente. Pourtant fait de matériaux périssables, la
+                question de sa conservation se pose : dans la rue, dans un musée
+                ?
+            </p>
+            <p class="chapter1__text">
+                Entre réalité et reconstitution, Killing Street-Art vous propose
+                de vous emmener découvrir ou bien redécouvrir des œuvres
+                notables du street art de leur démolition à leur éventuelle
+                résurrection.
+            </p>
+            <p class="link">Cliquez pour lancer l’expérience</p>
+            <p class="useCasque">
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="13" viewBox="0 0 15 13">
+                <g id="XMLID_791_" transform="translate(0 -19.242)">
+                  <path id="XMLID_792_" d="M13.636,26.224v-.961A6.086,6.086,0,0,0,7.5,19.242a6.086,6.086,0,0,0-6.136,6.02v.961A3.321,3.321,0,0,0,0,28.9a3.381,3.381,0,0,0,3.409,3.345.675.675,0,0,0,.682-.669V26.222a.675.675,0,0,0-.682-.669,3.472,3.472,0,0,0-.682.067v-.358A4.734,4.734,0,0,1,7.5,20.58a4.734,4.734,0,0,1,4.773,4.682v.358a3.472,3.472,0,0,0-.682-.067.675.675,0,0,0-.682.669v5.351a.675.675,0,0,0,.682.669A3.381,3.381,0,0,0,15,28.9,3.321,3.321,0,0,0,13.636,26.224Z" transform="translate(0 0)" fill="var(--grey)"/>
+                </g>
+              </svg>
+                Pour une meilleure expérience, l’usage du casque est recommandé
+            </p>
+        </div>
 
-        </p>
-        <p class="endScene__step2">
+        <div>
+            <div class="endScene" id="endScene1">
+                <p class="endScene__step">
+                    Vous avez fait le choix conforme à ce qui était prévu par
+                    l’artiste.
+                </p>
+                <p class="endScene__step">
+                    En piétinant l’oeuvre, et donc les cadavres qu’Ernest
+                    Pignon-Ernest représente, vous êtes pris d’un sentiment de
+                    malaise.
+                </p>
+                <p class="endScene__step">
+                    C’est le but de l’artiste que de vous faire ressentir une
+                    gêne désagréable, vous permettant de mesurer la violence de
+                    la répression qu’ont subit les Communards durant la Semaine
+                    Sanglante.
+                </p>
+            </div>
+            <div class="endScene" id="endScene2">
+                <p class="endScene__step1"></p>
+                <p class="endScene__step2"></p>
+                <p class="endScene__step3"></p>
+            </div>
+        </div>
 
-        </p>
-        <p class="endScene__step3">
-
-        </p>
-      </div>
-    </div>
-
-    <canvas id="_canvas"></canvas>
-</body>
+        <canvas id="_canvas"></canvas>
+    </body>
 </html>
