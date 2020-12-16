@@ -12,17 +12,17 @@ class QTE {
 
         this.initValues()
 
+        this.initValues = this.initValues.bind(this)
+
         window.addEventListener('keypress', (ev) => {
             if (this.keys.length == 1) {
-                this.functionsEnd[0].call()
-                this.initValues()
+                this.functionsEnd[0](this.initValues)
                 return
             }
 
             const t = this.keys.indexOf(ev.key.toUpperCase())
             if ( t >= 0) {
-                this.functionsEnd[t].call()
-                this.initValues()
+                this.functionsEnd[t](this.initValues)
             }
         })
     }
@@ -38,10 +38,10 @@ class QTE {
         this.monoChoose.classList.remove('show')
     }
 
-    newPluralChoose({ chooses, duration = 5, defaultChoose }) {
+    newPluralChoose ({ chooses, duration = 5, defaultChoose }) {
         if (this.keys.length > 0) {
-            console.error('Attention mutltiplication QTE')
-            return
+            console.log('Attention mutltiplication QTE')
+            this.clear()
         }
 
         chooses.forEach((choose, index) => {
@@ -57,6 +57,8 @@ class QTE {
             pluralElmenet.querySelector('div').innerHTML = keyCode
         })
 
+        console.log(this.keys)
+
         this.pluralChooseBar.classList.add('show')
         gsap.to(this.pluralChooseBar.querySelector('.line'), {
             width: '100%',
@@ -66,15 +68,19 @@ class QTE {
             onComplete: () => {
                 if (this.keys.length == 0) return
                 this.functionsEnd[defaultChoose].call()
-                this.initValues()
+                // this.initValues()
             },
         })
     }
 
+    /**
+     * 
+     * @param {Function} choose.funtion the function to be fired at the key entered 
+     */
     newMonoChoose({ choose, duration = 1 }) {
         if (this.keys.length > 0) {
-            console.error('Attention mutltiplication QTE')
-            return
+            console.warn('Attention mutltiplication QTE')
+            this.clear()
         }
         this.anim = true
 
@@ -116,6 +122,8 @@ class QTE {
             return result
         }
     }
+
+    clear() { this.keys = [] }
 }
 
 export default new QTE()

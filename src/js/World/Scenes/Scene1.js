@@ -37,38 +37,8 @@ export default class Scene1 {
     }
 
     setupScene() {
-        setTimeout(() => {
-            this.endScene()
-        }, 5000)
-
-        return
-
-        // QTE.newMonoChoose({
-        //   choose: {
-        //       keyCode: " ",
-        //       text: 'Avancer vers la scene<br>Appuyez sur espace',
-        //       functionEnd: () => {
-        //         console.log('SPACE')
-        //       },
-        //     },
-        //     duration: 1,
-        // })
-
-        // QTE.newPluralChoose({
-        //   chooses : [
-        //     {
-        //       keyCode: "Q",
-        //       text: 'Marcher sur les collages',
-        //       functionEnd: () => {console.log('Q')},
-        //     },{
-        //       keyCode: "D",
-        //       text: 'Esquivez les collages',
-        //       functionEnd: () => {console.log('D')},
-        //     }
-        //   ],
-        //   duration: 5,
-        //   defaultChoose: 0
-        // })
+        
+        this.regitserSceneActions()
 
         this.stairs = this.assets.models['Ernest_1412H1645'].scene
         this.stairs.scale.set(0.06, 0.06, 0.06)
@@ -125,11 +95,17 @@ export default class Scene1 {
         // init camera
         this.camera = App.camera.camera
         this.cameraContainer = App.camera.container
-        this.camera.position.z = 27
-        this.camera.position.y = 4.5
+        const camera = this.cameraInstance = App.camera
+
+        // init camera position
+        this.camera.position.set(
+          -16.05,
+          2.64,
+          40.8
+        )
+        this.cameraInstance.baseRotation.x = -0.4
 
         // raycast
-        const camera = (this.cameraInstance = App.camera)
         camera.raycaster = new Raycaster(
             camera.camera.position,
             new Vector3(0, -1, 0)
@@ -137,7 +113,10 @@ export default class Scene1 {
         camera.time.on('tick', () =>
             camera.raycaster.set(camera.camera.position, new Vector3(0, -1, 0))
         )
-        // window.addEventListener('keypress', e => console.log(camera.raycaster.intersectObject(this.stairs.getObjectByName('Escalier'), true)))
+        camera.time.on('tick', () => camera.raycaster.set(
+          camera.camera.position,
+          new Vector3(0, -1, 0)
+        ))
 
         const stairs = this.stairs.getObjectByName('Escaliers_3')
 
@@ -172,7 +151,18 @@ export default class Scene1 {
 
         this.createSmoke()
 
-        App.scene.fog = new Fog(0x030b24, 1, 50)
+        App.scene.fog = new Fog(0x030B24, 1, 50)
+    }
+
+    regitserSceneActions() {
+      QTE.newMonoChoose({
+        choose: {
+            keyCode: " ",
+            text: 'Avancer vers la scene<br>Appuyez sur espace',
+            functionEnd: this.goToStairs,
+          },
+          duration: 1,
+      })
     }
 
     createSmoke() {
@@ -215,6 +205,65 @@ export default class Scene1 {
 
         smokeContainer.position.set(0, 10, -5)
         this.container.add(smokeContainer)
+    }
+
+    goToStairs = (beforeCall) => {
+      beforeCall()
+
+      gsap.to(this.camera.position, {
+        x: 0.44, y: 4.012, z: 39.4,
+        duration: 2.5,
+        ease: 'power1.inOut'
+      })
+      this.cameraInstance.baseRotation.x = 0
+
+      this.createStairsChoice()
+    }
+
+    createStairsChoice() {
+      QTE.newPluralChoose({     
+        chooses : [
+          {
+            keyCode: "Q",
+            text: 'Marcher sur les collages',
+            functionEnd: (beforeCall) => {
+              beforeCall()
+              this.turnLeft()
+              this.climbStairs(3)
+              this.createStairsChoice()
+            },
+          },{
+            keyCode: "D",
+            text: 'Esquivez les collages',
+            functionEnd: (beforeCall) => {
+              beforeCall()
+              this.turnRight()
+              this.climbStairs(3)
+              this.createStairsChoice()
+            },
+          }
+        ],
+        duration: 5,
+        defaultChoose: 0
+      })
+    }
+
+    turnLeft = () => {
+      this.cameraInstance.baseRotation.x = 0.4
+      gsap.to(this.camera.position, {
+        x: -0.5,
+        duration: 0.8,
+        onComplete: () => this.cameraInstance.baseRotation.x = 0
+      })
+    }
+
+    turnRight = () => {
+      this.cameraInstance.baseRotation.x = -0.4
+      gsap.to(this.camera.position, {
+        x: -0.5,
+        duration: 0.8,
+        onComplete: () => this.cameraInstance.baseRotation.x = 0
+      })
     }
 
     climbStairs(nbStairs) {
@@ -278,51 +327,47 @@ export default class Scene1 {
     }
 
     createFootstep(stepIndex) {
-        const stairs = this.stairs.getObjectByName('Escaliers_3')
-        const position = this.cameraInstance.raycaster.intersectObject(
-            stairs,
-            true
-        )[0].point
-        const orientation = new Euler(-Math.PI / 2, 0, 0)
-        const size = new Vector3(2, 1.2, 200)
-        // const geometry = new DecalGeometry( stairs, position, orientation , size );
-        const geometry = new PlaneBufferGeometry(1, 2)
-        // const material = new ShaderMaterial( {
-        //   side: DoubleSide,
-        //   transparent: true,
-        //   vertexShader: require('@shaders/footstep.vert').default,
-        //   fragmentShader: [require('@shaders/utils/simplexNoise.glsl').default, require('@shaders/footstep.frag').default].join('\n'),
-        //   // fragmentShader: require('@shaders/footstep.frag').default
-        // } );
 
-        const material = new MeshStandardMaterial({
-            map: this.assets.textures.footstep,
-            transparent: true,
-        })
+      const stairs = this.stairs.getObjectByName('Escaliers_3')
+      const position = this.cameraInstance?.raycaster.intersectObject(stairs, true)?.[0].point
+      const orientation = new Euler(-Math.PI/2, 0, 0)
+      const size = new Vector3(2, 1.2, 200)
+      // const geometry = new DecalGeometry( stairs, position, orientation , size );
+      const geometry = new PlaneBufferGeometry(1, 2)
+      // const material = new ShaderMaterial( { 
+      //   side: DoubleSide,
+      //   transparent: true,
+      //   vertexShader: require('@shaders/footstep.vert').default,
+      //   fragmentShader: [require('@shaders/utils/simplexNoise.glsl').default, require('@shaders/footstep.frag').default].join('\n'),
+      //   // fragmentShader: require('@shaders/footstep.frag').default
+      // } );
 
-        const mesh = new Mesh(geometry, material)
-        mesh.position.copy(position)
-        mesh.rotation.copy(orientation)
-        mesh.position.z += 0.1
-        mesh.position.y += 0.01
+      const material = new MeshStandardMaterial({
+        map: this.assets.textures.footstep,
+        transparent: true
+      })
 
-        if (stepIndex % 2 === 0) mesh.position.x += 1
-        else mesh.position.x -= 1
+      const mesh = new Mesh( geometry, material );
+      mesh.position.copy(position)
+      mesh.rotation.copy(orientation)
+      mesh.position.z += 0.1
+      mesh.position.y += 0.01
+      
+      if(stepIndex % 2 === 0) mesh.position.x += 1
+      else mesh.position.x -= 1
 
-        this.container.add(mesh)
+      this.container.add( mesh )
 
-        gsap.to(mesh.scale, {
-            x: 2,
-            y: 2,
-            z: 2,
-            duration: 0.3,
-            ease: 'power4.in',
-        })
-        gsap.to(mesh.material, {
-            opacity: 0,
-            duration: 0.3,
-            ease: 'power4.in',
-        })
+      gsap.to(mesh.scale, {
+        x: 2, y: 2, z: 2,
+        duration: 0.3,
+        ease: "power4.in"
+      })
+      gsap.to(mesh.material, {
+        opacity: 0,
+        duration: 0.3,
+        ease: "power4.in"
+      })
     }
 
     endScene(end = 0) {
@@ -354,12 +399,6 @@ export default class Scene1 {
             })
         })
 
-        // tl.to(words1, {
-        //     y: 0,
-        //     opacity: 1,
-        //     stagger: 0.1,
-        //     delay: 2,
-        // })
     }
 
     destruct() {
