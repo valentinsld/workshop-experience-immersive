@@ -63,7 +63,22 @@ export default class Scene1 {
               ease: "Power3.inOut",
               onComplete: () => {
                 introScene.style.display = 'none'
-                this.regitserSceneActions()
+
+                setTimeout(() => {
+                  this.regitserSceneActions()
+                }, 5000);
+
+                this.timeline
+                .to(document.querySelector('.titleArt'), {
+                  opacity: 1,
+                  ease: "Power3.out"
+                })
+                .to(document.querySelector('.useMouse'), {
+                  y: 0,
+                  opacity: 1,
+                  duration: 1,
+                  ease: "Power3.out"
+                })
               }
           })
       })
@@ -103,6 +118,7 @@ export default class Scene1 {
           App.scene.add(this.container)
         }
       }, '-=1')
+      
 
     }
 
@@ -280,6 +296,12 @@ export default class Scene1 {
 
     goToStairs = (beforeCall) => {
       if(beforeCall) beforeCall()
+
+      gsap.to(document.querySelector('.useMouse'), {
+        opacity: 0,
+        duration: 1,
+        ease: "Power3.out"
+      })
 
       gsap.to(this.camera.position, {
         x: 0.5,
@@ -508,8 +530,9 @@ export default class Scene1 {
 
         steps.forEach((step, index) => {
             let mySplitText = new SplitText(step, {
-                    type: 'words',
+                    type: 'lines,words',
                     wordsClass: 'word',
+                    linesClass: 'line',
                 }),
                 words = mySplitText.words
 
@@ -520,13 +543,16 @@ export default class Scene1 {
                 stagger: .15,
                 ease: "Power2.inOut",
             }, '-=.1')
-            .to(step, {
-              delay: words.length * 0.3,
-              opacity: 0,
-              duration: .6,
-              ease: "Power4.out",
-              y: "-50%"
-            })
+
+            if (index < steps.length -1) {
+              tl.to(step, {
+                delay: words.length * 0.3,
+                opacity: 0,
+                duration: .6,
+                ease: "Power4.out",
+                y: "-50%"
+              })
+            }
         })
 
     }

@@ -83,3 +83,88 @@
 .endScene__step .word
     opacity: 0
     transform: translateY(10px)
+
+.endScene__step .link
+    display block
+
+// link end
+.endScene__step:last-child .line:last-child
+  display: inline-block !important;
+  position relative
+  cursor pointer
+  font-size 90%
+  margin-top 80px
+
+  transition all 350ms var(--ease-OutQuad)
+
+
+// .endScene__step:last-child .line:last-child::after 
+//   content ''
+//   position absolute
+//   bottom -.2em
+//   left 0
+//   width 100%
+//   height 1px
+//   background-color: var(--grey)
+//   opacity 0.5
+
+.endScene__step:last-child .line:last-child::before 
+  content ''
+  position absolute
+  z-index 1
+  bottom -.2em
+  left 0
+  width 100%
+  height 1px
+  background-color: var(--white)
+  opacity .8
+
+  transform-origin: center center
+  transform scaleX(0)
+  transition all 350ms var(--ease-OutQuad)
+
+
+.endScene__step:last-child .line:last-child:hover
+  color var(--white)
+
+.endScene__step:last-child .line:last-child:hover::before   
+  transform scaleX(1)
+
+
+
+.titleArt 
+    position absolute
+    top 40px
+    left 50%
+    margin 0
+    transform translateX(-50%)
+    pointer-events none
+    opacity 0
+
+    font-size: 0.85em
+    color #7D82A7
+
+
+
+.useMouse
+  position absolute
+  z-index 2
+  pointer-events none
+
+  display flex
+  align-items center
+
+  bottom 40px
+  left 50%
+  margin 0
+  transform: translate3D(-50%, 100%, 0)
+  font-size 90%
+
+  color #6E6D8B
+
+  opacity 0
+
+.useMouse svg
+  fill #6E6D8B
+  margin-right 8px
+  width 50px

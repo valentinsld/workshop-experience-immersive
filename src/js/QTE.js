@@ -25,7 +25,7 @@ class QTE {
                 this.monoChoose.classList.add('clicked')
                 setTimeout(() => {
                     this.monoChoose.classList.remove('clicked')
-                }, 1000)
+                }, 500)
                 return
             }
 
@@ -37,7 +37,7 @@ class QTE {
                 this.question.classList.add('transparent')
                 setTimeout(() => {
                     this.pluralChoose[t].classList.remove('clicked')
-                }, 1000)
+                }, 500)
             }
         })
     }

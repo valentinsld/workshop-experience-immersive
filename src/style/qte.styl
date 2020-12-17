@@ -7,12 +7,12 @@
     display flex
     justify-content center
     align-items center
-    transition: background-color 300ms ease-out
+    transition: background-color 450ms ease-out
 
 #question
     opacity 0
     transform translateY(0)
-    transition: opacity 300ms ease-out, transform 600ms ease-out
+    transition: opacity 450ms ease-out, transform 600ms ease-out
     will-change opacity, transform
     text-align: center;
     font: normal normal normal 24px/38px Open Sans;
@@ -27,14 +27,14 @@
 #pluralChoose__two
     position absolute
     top: 50%
-    transform translate3D(0, -50%, 0)
+    transform translate3D(0, 0, 0)
     margin-left 7vw
     margin-right 7vw
 
     text-align center
 
     opacity 0
-    transition: opacity 300ms ease-out
+    transition: all 450ms ease-out
 
 
 #pluralChoose__one 
@@ -47,7 +47,7 @@
     position absolute
     left 50%
     bottom 0
-    transform translate3D(-50%, -50%, 0)
+    transform translate3D(-50%, 0, 0)
     margin-bottom 50px
 
     min-width 400px
@@ -76,9 +76,10 @@
     position absolute
     top 50%
     right 10%
+    transform translate3D(0, 0, 0)
 
     opacity 0
-    transition: opacity 300ms ease-out
+    transition: all 450ms ease-out
 
 #monoChoose .line 
     display block
@@ -89,12 +90,17 @@
 #monoChoose div 
     text-align center
 
+#monoChoose .chooseLetter
+    padding 6px 24px
+
+#pluralChoose__bar.show
+    opacity 1
 
 #pluralChoose__one.show,
 #pluralChoose__two.show,
-#pluralChoose__bar.show,
 #monoChoose.show
     opacity 1
+    transform translate3D(0, -50%, 0)
 
 .chooseLetter 
     display inline-block
@@ -103,13 +109,14 @@
     border 1px solid var(--grey)
     border-radius 10px
 
-    transition: all 300ms ease-out
+    transition: all 00ms ease-out
 
 
 #monoChoose.clicked,
 #pluralChoose__one.clicked,
 #pluralChoose__two.clicked
-    transition: all 300ms ease-out 300ms
+    opacity: 1!important
+    transform: translate3D(0, -50%, 0)
 
 #monoChoose.clicked .chooseLetter,
 #pluralChoose__one.clicked .chooseLetter ,
