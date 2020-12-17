@@ -32,16 +32,84 @@ export default class Scene1 {
         this.assets = assets
         this.time = time
 
-        this.container = new Object3D()
-        this.setupScene()
-        App.scene.add(this.container)
+        this.introScene()
 
         this.state = { step: 0, side: 0, hasWalkedOver: 0 }
     }
 
+    introScene() {
+      const numberChars = new SplitText(
+        document.querySelector('.introScene__number'),
+            {type : "chars", charsClass: 'char',}
+        ).chars
+      const titleChars = new SplitText(
+          document.querySelector('.introScene__title'),
+              {type : "chars", charsClass: 'char',}
+          ).chars
+      const textWords = new SplitText(
+          document.querySelector('.introScene__text'),
+              {type : "words", wordsClass: 'word',}
+          ).words
+
+      const introScene = document.querySelector('.introScene')
+      introScene.style.display = 'flex'
+
+      const link = document.querySelector('.introScene__link')
+      link.addEventListener('click', () => {
+        console.log('click')
+          gsap.to(introScene, {
+              opacity: 0,
+              duration: .45,
+              ease: "Power3.inOut",
+              onComplete: () => {
+                introScene.style.display = 'none'
+                this.regitserSceneActions()
+              }
+          })
+      })
+
+      this.timeline = gsap.timeline()
+      this.timeline.to( introScene, {
+        backgroundColor :  'rgba(5,12,47,1)'
+      })
+      .to(titleChars, {
+          delay: 0.5,
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: 'Power3.out',
+          stagger: 0.035,
+        }
+      )
+      .to(textWords, {
+        y: 0,
+        opacity: 1,
+        duration: 0.8,
+        stagger: 0.02,
+        ease: 'Power2.inOut',
+      })
+      .to(numberChars, {
+        y: 0,
+        duration: 2,
+        stagger: 1,
+        ease: 'Power3.out',
+      }, '-=2')
+      .to(link, {
+        opacity: 1,
+        y: 80,
+        delay: 0.5,
+        onComplete: () => {
+          this.container = new Object3D()
+          this.setupScene()
+          App.scene.add(this.container)
+        }
+      }, '-=1')
+
+    }
+
     setupScene() {
         
-        this.regitserSceneActions()
+        // this.regitserSceneActions()
 
         this.stairs = this.assets.models['Ernest_1412H1645'].scene
         this.stairs.scale.set(0.06, 0.06, 0.06)
@@ -152,6 +220,10 @@ export default class Scene1 {
         this.createSmoke()
 
         App.scene.fog = new Fog(0x030B24, 1, 50)
+
+        gsap.to(document.querySelector('.introScene'), {
+          backgroundColor :  'rgba(5,12,47,0.8)'
+        })
     }
 
     regitserSceneActions() {

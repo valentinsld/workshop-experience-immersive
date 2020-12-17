@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta http-equiv="X-UA-Compatible" content="ie=edge" />
         <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon" />
-        <title>THREE.js Template</title>
+        <title>Shredding street art</title>
     </head>
     <body>
         <div id="cursorS"></div>
@@ -34,6 +34,7 @@
         </div>
 
         <div id="QTE">
+            <div id="question"></div>
             <div class="pluralChoose">
                 <div id="pluralChoose__one">
                     <p></p>
@@ -54,10 +55,10 @@
             </div>
         </div>
 
-        <div id="chapter1">
-            <h2 class="chapter1__title">Le street art est mort, <br>
+        <div id="Intro">
+            <h2 class="Intro__title">Le street art est mort, <br>
               vive le street art !</h2>
-            <p class="chapter1__text">
+            <p class="Intro__text">
                 Depuis la fin du XXe siècle, les rues des villes se couvrent de
                 messages, de graffitis, de collages. S’il est initialement
                 sauvage, voire vandale, la tendance est d’institutionnaliser cet
@@ -66,7 +67,7 @@
                 question de sa conservation se pose : dans la rue, dans un musée
                 ?
             </p>
-            <p class="chapter1__text">
+            <p class="Intro__text">
                 Entre réalité et reconstitution, Killing Street-Art vous propose
                 de vous emmener découvrir ou bien redécouvrir des œuvres
                 notables du street art de leur démolition à leur éventuelle
@@ -83,7 +84,19 @@
             </p>
         </div>
 
-        <div>
+        <div id="Chapitre1">
+
+            <div class="introScene">
+                <p class="introScene__number">01</p>
+                <div class="introScene__content">
+                    <h2 class="introScene__title">Acteur de<br> sa destruction</h2>
+                    <p class="introScene__text">Le street investit nos rues et nous entoure. Des fois, il nous prend à parti, nous invite à devenir acteur, nous force à le regarder droit dans les yeux. 
+                        Au pied des escaliers du métro, dans une salle d’enchère ou dessiné à la craie, les artistes nous invitent à prendre des décisions. Quels seront vos choix ?</p>
+                </div>
+                
+                <p class="introScene__link link">Commencer</p>
+            </div>
+
             <div class="endScene" id="endScene1">
                 <p class="endScene__step">
                     Vous avez fait le choix conforme à ce qui était prévu par
@@ -102,9 +115,9 @@
                 </p>
             </div>
             <div class="endScene" id="endScene2">
-                <p class="endScene__step1"></p>
-                <p class="endScene__step2"></p>
-                <p class="endScene__step3"></p>
+                <p class="endScene__step">Vous avez fait le choix contraire à ce qui était prévu par l’artiste.</p>
+                <p class="endScene__step">En choisissant d’épargner l’oeuvre, vous manquez l’aspect immersif de l’installation.</p>
+                <p class="endScene__step">Les sérigraphies évoquent les victimes de la Semaine Sanglante, répression violente ayant mis fin à la Commune de 1871, et l’action du spectateur est nécessaire pour mesurer la violence ayant eu lieu.</p>
             </div>
         </div>
 

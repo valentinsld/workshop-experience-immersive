@@ -27,14 +27,14 @@ export default class Scene0 {
 
         // init split text
         this.titleChars = new SplitText(
-            document.querySelector('.chapter1__title'),
+            document.querySelector('.Intro__title'),
             {
                 type: 'chars',
                 charsClass: 'char',
             }
         ).chars
         this.textLines = new SplitText(
-            document.querySelectorAll('.chapter1__text'),
+            document.querySelectorAll('.Intro__text'),
             {
                 type: 'lines',
                 linesClass: 'line',
@@ -64,45 +64,7 @@ export default class Scene0 {
     }
 
     createSmoke() {
-        const smokeContainer = new Group()
-        // const smokeGeo = new PlaneBufferGeometry(100, 100)
-
-        // const smokeMaterial1 = new MeshLambertMaterial({
-        //     map: this.assets.textures.smoke3,
-        //     opacity: 1,
-        //     transparent: true,
-        // })
-
-        // const smokeMaterial2 = new MeshLambertMaterial({
-        //     map: this.assets.textures.smoke3,
-        //     opacity: 0,
-        //     transparent: true,
-        // })
-
-        // for (let i = 0; i < 50; i++) {
-        //     const particle = new Mesh(
-        //         smokeGeo,
-        //         i % 2 === 0 ? smokeMaterial1 : smokeMaterial2
-        //     )
-        //     particle.position.set(
-        //         (Math.random() - 0.5) * 30,
-        //         (Math.random() - 0.5) * 1,
-        //         (Math.random() - 0.5) * 4
-        //     )
-        //     particle.rotation.z = Math.random() * 360
-        //     smokeContainer.add(particle)
-        // }
-
-        // this.time.on('tick', () => {
-        //     smokeContainer.children.forEach((child) => {
-        //         const z = child.rotation.z
-        //         child.lookAt(this.camera.position)
-        //         child.rotation.z = z + 0.008
-        //     })
-        // })
-
-        // smokeContainer.position.set(0, -5, -2)
-        // this.container.add(smokeContainer)
+        this.smokeContainer = new Group()
 
         const material = new MeshLambertMaterial({
             color: 0xffffff,
@@ -126,13 +88,13 @@ export default class Scene0 {
             )
             particle.rotation.z = Math.random() * Math.PI * 2
 
-            smokeContainer.add(particle)
+            this.smokeContainer.add(particle)
             this.particles.push(particle)
         }
 
-        this.container.add(smokeContainer)
-        smokeContainer.position.set(-.6, -2, -2.7)
-        smokeContainer.rotation.y = -0.380
+        this.container.add(this.smokeContainer)
+        this.smokeContainer.position.set(-.6, -2, -2.7)
+        this.smokeContainer.rotation.y = -0.380
 
         this.time.on('tick', () => {
             this.particles.forEach((particle) => {
@@ -162,7 +124,7 @@ export default class Scene0 {
                 from: 'random',
                 ease: 'Power2.inOut',
             })
-            .to(document.querySelector('#chapter1 .link'), {
+            .to(document.querySelector('#Intro .link'), {
                 opacity: 1,
                 y: 0,
                 delay: 0.5,
@@ -170,19 +132,25 @@ export default class Scene0 {
     }
 
     sceneOut() {
-        const chapitre = document.getElementById('chapter1')
+        this.chapitre = document.getElementById('Intro')
 
-        this.timeline.to(chapitre, {
+        this.timeline.to(this.chapitre, {
             opacity: 0,
             duration: 1,
+            ease: 'Power3.out',
+        }).to(this.smokeContainer.position, {
+            y: -5,
+            duration: 1,
+            ease: 'Power3.inOut',
             onComplete: () => {
-                chapitre.style.display = 'none'
+                this.destruct()
                 App.world.sceneManager.next()
             },
-        })
+        }, "-=.5")
     }
 
     destruct() {
+        this.chapitre.style.display = 'none'
         this.container.remove(this.light)
     }
 }
