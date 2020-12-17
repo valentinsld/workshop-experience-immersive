@@ -2,6 +2,10 @@ import gsap from 'gsap'
 
 class QTE {
     constructor() {
+
+        this.el = document.querySelector('#QTE')
+        this.question = document.querySelector('#question')
+
         this.pluralChoose = [
             document.getElementById('pluralChoose__one'),
             document.getElementById('pluralChoose__two'),
@@ -30,6 +34,7 @@ class QTE {
                 this.resetProgress()
                 this.functionsEnd[t](this.initValues)
                 this.pluralChoose[t].classList.add('clicked')
+                this.question.classList.add('transparent')
                 setTimeout(() => {
                     this.pluralChoose[t].classList.remove('clicked')
                 }, 1000)
@@ -49,6 +54,7 @@ class QTE {
     }
 
     newPluralChoose ({ chooses, duration = 5, defaultChoose }) {
+        this.question.classList.remove('transparent')
         if (this.keys.length > 0) {
             console.log('Attention mutltiplication QTE')
             this.clear()
@@ -79,6 +85,7 @@ class QTE {
                 if (this.keys.length == 0) return
                 this.resetProgress()
                 this.functionsEnd[defaultChoose](this.initValues)
+                this.question.classList.add('transparent')
             },
         })
     }
@@ -88,6 +95,7 @@ class QTE {
      * @param {Function} choose.funtion the function to be fired at the key entered 
      */
     newMonoChoose({ choose, duration = 1 }) {
+        this.question.classList.remove('transparent')
         if (this.keys.length > 0) {
             console.warn('Attention mutltiplication QTE')
             this.clear()
@@ -136,6 +144,21 @@ class QTE {
             }
             return result
         }
+    }
+
+    pause(text) {
+        this.el.style.backgroundColor = `#04092488`
+        this.question.innerHTML = text
+        this.question.style.opacity = 1
+    }
+
+    unpause() {
+        this.el.style.backgroundColor = `#04092400`
+        this.question.style.transform = `translateY(-220%)`
+    }
+
+    removeQuestion() {
+        this.question.innerHTML = ''
     }
 
     clear() { this.keys = [] }

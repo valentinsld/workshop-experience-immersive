@@ -10,6 +10,8 @@ export default class Camera {
     this.debug = options.debug
     this.time = options.time
 
+    this.locked = false
+
     // Set up
     this.container = new Object3D()
     this.container.name = 'Camera'
@@ -27,7 +29,7 @@ export default class Camera {
     })
     
     this.time.on('tick', () => {
-      if (!this.orbitControls.enabled) this.camera?.quaternion.setFromEuler( this.euler )
+      if (!this.orbitControls.enabled && !this.locked) this.camera?.quaternion.setFromEuler( this.euler )
     })
 
     this.setCamera()
@@ -44,16 +46,19 @@ export default class Camera {
     )
     this.container.add(this.camera)
     // Change camera aspect on resize
+    setTimeout(() => {
+      this.moveCamera()
+    }, 2000)
+
     this.sizes.on('resize', () => {
       this.camera.aspect =
         this.sizes.viewport.width / this.sizes.viewport.height
       // Call this method because of the above change
       this.camera.updateProjectionMatrix()
-      this.moveCamera()
     })
   }
   moveCamera(e) {
-    const clientX = e.clientX ?? 0, clientY = e.clientY ?? 0
+    const clientX = e?.clientX ?? 0, clientY = e?.clientY ?? 0
     this.eulerStack.y = -((clientX - window.innerWidth/2)) * 0.0002 + this.baseRotation.x
       this.eulerStack.x = -(clientY - window.innerHeight/2) * 0.0002 + + this.baseRotation.y
       if (this.animation) this.animation.kill()
