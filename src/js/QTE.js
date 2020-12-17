@@ -19,9 +19,11 @@ class QTE {
         this.initValues = this.initValues.bind(this)
 
         window.addEventListener('keypress', (ev) => {
-            if (this.keys.length == 1) {
+            const t = this.keys.indexOf(ev.key.toUpperCase())
+
+            if (this.keys.length == 1 && t !== -1) {
                 this.resetProgress()
-                this.functionsEnd[0](this.initValues)
+                this.functionsEnd[t](this.initValues)
                 this.monoChoose.classList.add('clicked')
                 setTimeout(() => {
                     this.monoChoose.classList.remove('clicked')
@@ -29,7 +31,6 @@ class QTE {
                 return
             }
 
-            const t = this.keys.indexOf(ev.key.toUpperCase())
             if ( t >= 0) {
                 this.resetProgress()
                 this.functionsEnd[t](this.initValues)

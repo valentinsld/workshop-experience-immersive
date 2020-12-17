@@ -1,6 +1,10 @@
-import { Scene, WebGLRenderer, Color } from 'three'
+import { Scene, WebGLRenderer, Color, ShaderLib, UniformsUtils, ShaderMaterial, WebGLRenderTarget, NoBlending, NearestFilter, RGBAFormat } from 'three'
+import { CopyShader } from 'three/examples/jsm/shaders/CopyShader.js';
+import { SSAOShader } from 'three/examples/jsm/shaders/SSAOShader.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
-import { SSAOPass } from 'three/examples/jsm/postprocessing/SSAOPass.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { MaskPass } from 'three/examples/jsm/postprocessing/MaskPass.js';
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 
 import * as dat from 'dat.gui'
 import Stats from 'stats-js'
@@ -53,8 +57,8 @@ export default class App {
     this.time.on('tick', () => {
       if (this.stats) this.stats.begin();
 
-      this.composer.render();
-      // this.renderer.render(this.scene, this.camera.camera)
+      // this.composer.render();
+      this.renderer.render(this.scene, this.camera.camera)
 
       if (this.stats) this.stats.end();
     })
@@ -74,11 +78,33 @@ export default class App {
     /////////////////////////
     this.composer = new EffectComposer( this.renderer );
 
-    const ssaoPass = new SSAOPass( this.scene, this.camera.camera, this.sizes.viewport.width, this.sizes.viewport.height );
-    ssaoPass.kernelRadius = 14;
-    ssaoPass.minDistance = 0.0025
-    ssaoPass.maxDistance = 0.1
-    this.composer.addPass( ssaoPass );
+    // const ssaoPass = new SSAOPass( this.scene, this.camera.camera, this.sizes.viewport.width, this.sizes.viewport.height );
+    // ssaoPass.kernelRadius = 14;
+    // ssaoPass.minDistance = 0.0025
+    // ssaoPass.maxDistance = 0.1
+    // this.composer.addPass( ssaoPass );
+
+    // depth
+				
+    // var depthShader = ShaderLib[ "depthRGBA" ];
+    // var depthUniforms = UniformsUtils.clone( depthShader.uniforms );
+
+    // depthMaterial = new ShaderMaterial( { fragmentShader: depthShader.fragmentShader, vertexShader: depthShader.vertexShader, uniforms: depthUniforms } );
+    // depthMaterial.blending = NoBlending;
+
+    // postprocessing
+    
+    this.composer.addPass( new RenderPass( this.scene, this.camera ) );
+
+    const depthTarget = new WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: NearestFilter, magFilter: NearestFilter, format: RGBAFormat } );
+    
+    var effect = new ShaderPass( SSAOShader );
+    effect.uniforms[ 'tDepth' ].value = depthTarget;
+    effect.uniforms[ 'size' ].value.set( window.innerWidth, window.innerHeight );
+    effect.uniforms[ 'cameraNear' ].value = camera.near;
+    effect.uniforms[ 'cameraFar' ].value = camera.far;
+    effect.renderToScreen = true;
+    composer.addPass( effect );
 
   }
   setWorld() {

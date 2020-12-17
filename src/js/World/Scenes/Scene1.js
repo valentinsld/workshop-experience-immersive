@@ -14,7 +14,10 @@ import {
     MeshLambertMaterial,
     Group,
     Fog,
+    BufferAttribute,
     Quaternion,
+    Geometry,
+    MeshBasicMaterial,
 } from 'three'
 import { DecalGeometry } from 'three/examples/jsm/geometries/DecalGeometry'
 
@@ -28,9 +31,10 @@ gsap.registerPlugin(CustomEase, SplitText)
 import QTE from '../../QTE'
 
 export default class Scene1 {
-    constructor({ assets, time }) {
+    constructor({ assets, time, options }) {
         this.assets = assets
         this.time = time
+        this.debug = options.debug
 
         this.container = new Object3D()
         this.setupScene()
@@ -43,7 +47,31 @@ export default class Scene1 {
         
         this.regitserSceneActions()
 
-        this.stairs = this.assets.models['Ernest_1412H1645'].scene
+        this.stairs = this.assets.models['01_ERNEST_0002'].scene
+
+        // uv duplication
+        // const sol = this.stairs.getObjectByName('Sol')
+        // const uv1Array = sol.geometry.getAttribute('uv').array
+        // sol.geometry.setAttribute( 'uv2', new BufferAttribute( uv1Array, 1, false ) )
+
+        // sol.material.aoMap = this.assets.textures.aomap
+        // // sol.material.map = this.assets.textures.colormap
+        // sol.material.needsUpdate = true;  
+        // this.debugFolder = this.debug.addFolder('Sol')
+        // this.debugFolder.open()
+        // this.debugFolder.add(sol.material, 'aoMapIntensity', 0, 1, 0.1).name('Intensité occlusion map')
+
+        // const sol = this.stairs.getObjectByName('Sol')
+        // const solMaterial = sol.children[0].material
+
+        // const solGeometry = new Geometry()
+        // sol.traverse(child => {
+        //   const mesh = new Mesh(child.geometry)
+        //   mesh.updateMatrix()
+        //   solGeometry.merge(mesh.geometry, mesh.matrix)
+
+        // })
+
         this.stairs.scale.set(0.06, 0.06, 0.06)
         this.stairs.position.x = -60
         this.stairs.position.z = 36
@@ -65,6 +93,10 @@ export default class Scene1 {
         // Ambient light
         this.ambienteLight = new AmbientLight(0x316fcc, 0.12)
         this.container.add(this.ambienteLight)
+        
+        // // Ambient light 2
+        // this.ambienteLight = new AmbientLight(0xffffff, 1)
+        // this.container.add(this.ambienteLight)
 
         // Light
         this.light = new PointLight(0x316fcc, 0.32, 0, 2)
@@ -120,29 +152,40 @@ export default class Scene1 {
 
         const stairs = this.stairs.getObjectByName('Escaliers_3')
 
-        const texture1 = cloneDeep(this.assets.textures['Texture-Pignopn'])
-        texture1.offset = new Vector2(0, -0.1)
-        texture1.repeat = new Vector2(2.04, 3.03)
-        const texture2 = cloneDeep(this.assets.textures['Texture-Pignopn'])
-        texture2.offset = new Vector2(-1.71, -1.07)
-        texture2.repeat = new Vector2(2.04, 3.03)
-        const texture3 = cloneDeep(this.assets.textures['Texture-Pignopn'])
-        texture3.offset = new Vector2(0, -1.95)
-        texture3.repeat = new Vector2(2.04, 3.03)
+        // const texture1 = cloneDeep(this.assets.textures['Texture-Pignopn'])
+        // texture1.offset = new Vector2(0, -0.1)
+        // texture1.repeat = new Vector2(2.04, 3.03)
+        // const texture2 = cloneDeep(this.assets.textures['Texture-Pignopn'])
+        // texture2.offset = new Vector2(-1.71, -1.07)
+        // texture2.repeat = new Vector2(2.04, 3.03)
+        // const texture3 = cloneDeep(this.assets.textures['Texture-Pignopn'])
+        // texture3.offset = new Vector2(0, -1.95)
+        // texture3.repeat = new Vector2(2.04, 3.03)
+
+        const colorTexture = this.assets.textures['Texture-Pignon-transpa']
+
+        colorTexture.rotation = 3
+        colorTexture.repeat = new Vector2(1.2, 1)
+        colorTexture.offset = new Vector2(0.720, 1.04)
+        // this.assets.textures['affiches-alpha-revert'].rotation = 3
+        // this.assets.textures['affiches-alpha-revert'].repeat = new Vector2(0.75, 1)
+        // this.assets.textures['affiches-alpha-revert'].offset = new Vector2(0.320, 1.061)
 
         const materials = [
-            cloneDeep(this.stairs.getObjectByName('barrière_Left').material),
-            new MeshStandardMaterial({ map: texture1, transparent: true }),
-            new MeshStandardMaterial({ map: texture2, transparent: true }),
-            new MeshStandardMaterial({ map: texture3, transparent: true }),
+            cloneDeep(this.stairs.getObjectByName('Sol-Mat').material),
+          new MeshStandardMaterial({ 
+            map: colorTexture, 
+            transparent: true, 
+            // alphaMap: this.assets.textures['affiches-alpha-revert'] 
+          }),
         ]
+        
         stairs.geometry.clearGroups()
         stairs.geometry.addGroup(0, 1000, 0)
         stairs.geometry.addGroup(0, 1000, 1)
-        stairs.geometry.addGroup(0, 1000, 2)
-        stairs.geometry.addGroup(0, 1000, 3)
-
+        
         stairs.material = materials
+        // stairs.material = new MeshStandardMaterial({ map: this.assets.textures['affiches'], transparent: true }),
 
         this.stairs.traverse((child) => {
             child.matrixAutoUpdate = false
@@ -216,7 +259,7 @@ export default class Scene1 {
         ease: 'power2.out'
       })
       gsap.to(this.camera.position, {
-        z: 28.5,
+        z: 36.5,
         duration: 5,
         ease: 'power2.inOut'
       })
@@ -228,6 +271,11 @@ export default class Scene1 {
         setTimeout(() => {
           this.createStairsChoice(5)
           QTE.unpause()
+          gsap.to(this.camera.position, {
+            z: 28.5,
+            duration: 3,
+            ease: 'power2.inOut'
+          })
         }, 3000)
         gsap.to(this.cameraInstance.baseRotation, { y: -.4 })
       }, 4000)
@@ -283,21 +331,29 @@ export default class Scene1 {
     }
 
     turnLeft = () => {
-      this.cameraInstance.baseRotation.x = 0.4
+      this.cameraInstance.lock()
+
+      // this.cameraInstance.baseRotation.x = 0.4
       gsap.to(this.camera.position, {
         x: -0.5,
         duration: 0.8,
-        onComplete: () => this.cameraInstance.baseRotation.x = 0
+        // onComplete: () => this.cameraInstance.baseRotation.x = 0
       })
+
+      this.cameraInstance.unlock()
     }
 
     turnRight = () => {
-      this.cameraInstance.baseRotation.x = -0.4
+      this.cameraInstance.lock()
+
+      this.cameraInstance.smoothTurn(0, 0.4, 0, 1.5)
+
       gsap.to(this.camera.position, {
         x: 4.5,
         duration: 0.8,
-        onComplete: () => this.cameraInstance.baseRotation.x = 0
       })
+
+      this.cameraInstance.unlock()
     }
 
     finalPosition() {
@@ -315,17 +371,8 @@ export default class Scene1 {
     }
 
     lockCamera() {
-      const newQuaternion = this.camera.quaternion.clone()
-      newQuaternion.setFromEuler( new Euler(0, 0, 0, 'YXZ') )
-      gsap.to(this.camera?.quaternion, {
-        x: newQuaternion.x,
-        y: newQuaternion.y,
-        z: newQuaternion.z,
-        w: newQuaternion.w,
-        duration: 2.5,
-        ease: 'power3.out'
-      })
-      this.cameraInstance.locked = true
+      this.cameraInstance.smoothTurn(0, 0, 0)
+      this.cameraInstance.lock()
     }
 
     climbStairs(nbStairs) {

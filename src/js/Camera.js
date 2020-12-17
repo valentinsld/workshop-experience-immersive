@@ -69,6 +69,24 @@ export default class Camera {
         ease: "power4.easeOut"
       })
   }
+  lock() {
+    this.locked = true
+  }
+  unlock() {
+    this.locked = false
+  }
+  smoothTurn(x, y, z, duration = 2.5, ease = 'power3.out') {
+    const newQuaternion = this.camera.quaternion.clone()
+    newQuaternion.setFromEuler( new Euler(x, y, z, 'YXZ') )
+      gsap.to(this.camera?.quaternion, {
+        x: newQuaternion.x,
+        y: newQuaternion.y,
+        z: newQuaternion.z,
+        w: newQuaternion.w,
+        duration,
+        ease
+      })
+  }
   // setPosition() {
   //   // Set camera position
   //   this.camera.position.x = 0
