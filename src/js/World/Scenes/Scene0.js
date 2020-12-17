@@ -56,9 +56,9 @@ export default class Scene0 {
         // Ambient light
         // this.ambienteLight = new AmbientLight(0xffffff, .5)
         // this.container.add(this.ambienteLight)
-        const light = new DirectionalLight(0xffffff, 0.5)
-        light.position.set(-1, 0, 1)
-        this.container.add(light)
+        this.light = new DirectionalLight(0xffffff, 0.5)
+        this.light.position.set(-1, 0, 1)
+        this.container.add(this.light)
 
         this.createSmoke()
     }
@@ -182,5 +182,7 @@ export default class Scene0 {
         })
     }
 
-    destruct() {}
+    destruct() {
+        this.container.remove(this.light)
+    }
 }
