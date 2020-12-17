@@ -1,0 +1,40 @@
+#chapter1
+    position absolute
+    width 100%
+    height 100%
+
+    display flex
+    flex-direction: column
+    align-items center
+    justify-content center
+
+    color var(--grey)
+    // background-image: url('../textures/Chapitre1_texture.png')
+    background-size: cover
+
+.chapter1__title
+    margin-top 0
+    text-align: center
+    font-family: var(--serpiente)
+    font-size 3.5em
+    font-weight 100
+
+.chapter1__title .char
+    opacity 0
+    transform translate3D(0, 50%, 0)
+
+.chapter1__text
+    max-width 750px
+    text-align center
+    line-height 1.8em
+
+.chapter1__text .line
+    opacity 0
+    transform translate3D(0, 10px, 0)
+
+.chapter1__text:nth-child(3)
+    margin-bottom 50px
+
+#chapter1 .link 
+    opacity 0
+    transform translate3D(0, 20px, 0)

@@ -54,10 +54,13 @@
   },
   "homepage": "https://github.com/Lissandre/three_template#readme",
   "dependencies": {
+    "blotter": "^2.1.0",
+    "global": "^4.4.0",
     "gsap": "file:gsap-bonus.tgz",
     "lodash": "^4.17.20",
     "postprocessing": "^6.18.0",
     "stats-js": "^1.0.1",
-    "three.ssaopass": "^1.0.1"
+    "three.ssaopass": "^1.0.1",
+    "underscore": "^1.12.0"
   }
 }

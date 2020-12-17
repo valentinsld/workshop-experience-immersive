@@ -12,6 +12,8 @@ import Assets from '@tools/Loader'
 import Camera from './Camera'
 import World from '@world/index'
 
+import Cursor from './Cursor'
+
 export default class App {
   constructor(options) {
     // Set options
@@ -22,10 +24,14 @@ export default class App {
     this.sizes = new Sizes()
     this.assets = new Assets()
 
+    this.setCursor()
     this.setConfig()
     this.setRenderer()
     this.setCamera()
     this.setWorld()
+  }
+  setCursor() {
+    this.cursor = new Cursor({ id: "#cursorS", speed: 0.15 });
   }
   setRenderer() {
     // Set scene
@@ -53,8 +59,10 @@ export default class App {
     this.time.on('tick', () => {
       if (this.stats) this.stats.begin();
 
-      this.composer.render();
-      // this.renderer.render(this.scene, this.camera.camera)
+      // this.composer.render();
+      this.renderer.render(this.scene, this.camera.camera)
+
+      this.cursor.animate()
 
       if (this.stats) this.stats.end();
     })

@@ -5,20 +5,99 @@
 @import './loading.styl'
 @import './qte.styl'
 @import './endScene.styl'
+@import './chapter1.styl'
 
 :root 
   --white #fff
-  --grey #C5CBF4 // #7D82A7
+  --grey #a1a6cc // #7D82A7
   --blue #27315E
   --black #040924
+
   --serpiente 'Serpiente Display Display'
+
+  --ease-OutQuad cubic-bezier(0.250, 0.460, 0.450, 0.940)
 
 html {
   color var(--white)
   font-family: 'Open Sans', sans-serif
   font-weight: 400
+
+  background-color: var(--blue)
+
+  // cursor none!important
 }
 
 ::selection
   background-color var(--grey)
   color var(--blue)
+
+
+//  Links
+////////////////
+.link 
+  position relative
+  cursor pointer
+  font-size 110%
+
+  transition all 350ms var(--ease-OutQuad)
+
+.link::after 
+  content ''
+  position absolute
+  bottom -.2em
+  left 0
+  width 100%
+  height 1px
+  background-color: var(--grey)
+  opacity 0.5
+
+.link::before 
+  content ''
+  position absolute
+  z-index 1
+  bottom -.2em
+  left 0
+  width 100%
+  height 1px
+  background-color: var(--white)
+  opacity .8
+
+  transform-origin: center center
+  transform scaleX(0)
+  transition all 350ms var(--ease-OutQuad)
+
+
+.link:hover
+  color var(--white)
+
+.link:hover::before   
+  transform scaleX(1)
+
+//  Cursor
+//////////////
+#cursor,
+#cursorS {
+  pointer-events: none
+  border-radius: 100px;
+  opacity: 0.8;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+  z-index: 1050;
+
+  transition: transform 300ms ease;
+}
+#cursor {
+  background: #e6e8f7;
+  width: 20px;
+  height: 20px;
+}
+#cursorS {
+  width: 50px;
+  height: 50px;
+
+  border: 1px solid #e6e8f7;
+}

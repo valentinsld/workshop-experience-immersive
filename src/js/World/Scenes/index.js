@@ -18,7 +18,7 @@ export default class SceneManager {
 
         this.state = {
             currentSceneIndex: 0,
-            currentScene: new this.scenes[1](this.params),
+            currentScene: new this.scenes[0](this.params),
             isTransitioning: true,
         }
     }
