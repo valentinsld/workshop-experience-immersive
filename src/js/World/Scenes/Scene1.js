@@ -73,7 +73,6 @@ export default class Scene1 {
         backgroundColor :  'rgba(5,12,47,1)'
       })
       .to(titleChars, {
-          delay: 0.5,
           opacity: 1,
           y: 0,
           duration: 0.8,

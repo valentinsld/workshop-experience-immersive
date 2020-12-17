@@ -139,9 +139,10 @@ export default class Scene0 {
             duration: 1,
             ease: 'Power3.out',
         }).to(this.smokeContainer.position, {
-            y: -5,
+            y: -4,
+            z: -1,
             duration: 1,
-            ease: 'Power3.inOut',
+            ease: 'Power1.in',
             onComplete: () => {
                 this.destruct()
                 App.world.sceneManager.next()
