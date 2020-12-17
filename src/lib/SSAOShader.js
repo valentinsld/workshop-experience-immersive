@@ -15,10 +15,155 @@ export default {
         lumInfluence: { type: 'f', value: 0.9 },
     },
     vertexShader:
-        'varying vec2 vUv;\nvoid main() {\nvUv = uv;\ngl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}',
+        `varying vec2 vUv;
+        void main() {
+            vUv = uv;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+        }`,
 
     fragmentShader:
-        'uniform float cameraNear;\nuniform float cameraFar;\nuniform float fogNear;\nuniform float fogFar;\nuniform bool fogEnabled;\nuniform bool onlyAO;\nuniform vec2 size;\nuniform float aoClamp;\nuniform float lumInfluence;\nuniform sampler2D tDiffuse;\nuniform sampler2D tDepth;\nvarying vec2 vUv;\n#define DL 2.399963229728653\n#define EULER 2.718281828459045\nfloat width = size.x;\nfloat height = size.y;\nfloat cameraFarPlusNear = cameraFar + cameraNear;\nfloat cameraFarMinusNear = cameraFar - cameraNear;\nfloat cameraCoef = 2.0 * cameraNear;\n#ifndef SAMPLES\n#define SAMPLES 8\n#endif\n#ifndef RADIUS\n#define RADIUS 5.0\n#endif\n#if !defined( FLOAT_DEPTH ) && !defined( RGBA_DEPTH )\n#define RGBA_DEPTH\n#endif\n#ifndef ONLY_AO_COLOR\n#define ONLY_AO_COLOR 1.0, 1.0, 1.0\n#endif\nconst int samples = SAMPLES;\nconst float radius = RADIUS;\nconst bool useNoise = false;\nconst float noiseAmount = 0.0003;\nconst float diffArea = 0.4;\nconst float gDisplace = 0.4;\nconst vec3 onlyAOColor = vec3( ONLY_AO_COLOR );\nfloat unpackDepth( const in vec4 rgba_depth ) {\nfloat depth = 0.0;\n#if defined( RGBA_DEPTH )\nconst vec4 bit_shift = vec4( 1.0 / ( 256.0 * 256.0 * 256.0 ), 1.0 / ( 256.0 * 256.0 ), 1.0 / 256.0, 1.0 );\ndepth = dot( rgba_depth, bit_shift );\n#elif defined( FLOAT_DEPTH )\ndepth = rgba_depth.w;\n#endif\nreturn depth;\n}\nvec2 rand( const vec2 coord ) {\nvec2 noise;\nif ( useNoise ) {\nfloat nx = dot ( coord, vec2( 12.9898, 78.233 ) );\nfloat ny = dot ( coord, vec2( 12.9898, 78.233 ) * 2.0 );\nnoise = clamp( fract ( 43758.5453 * sin( vec2( nx, ny ) ) ), 0.0, 1.0 );\n} else {\nfloat ff = fract( 1.0 - coord.s * ( width / 2.0 ) );\nfloat gg = fract( coord.t * ( height / 2.0 ) );\nnoise = vec2( 0.25, 0.75 ) * vec2( ff ) + vec2( 0.75, 0.25 ) * gg;\n}\nreturn ( noise * 2.0  - 1.0 ) * noiseAmount;\n}\nfloat doFog() {\nfloat zdepth = unpackDepth( texture2D( tDepth, vUv ) );\nfloat depth = -cameraFar * cameraNear / ( zdepth * cameraFarMinusNear - cameraFar );\nreturn smoothstep( fogNear, fogFar, depth );\n}\nfloat readDepth( const in vec2 coord ) {\nreturn cameraCoef / ( cameraFarPlusNear - unpackDepth( texture2D( tDepth, coord ) ) * cameraFarMinusNear );\n}\nfloat compareDepths( const in float depth1, const in float depth2, inout int far ) {\nfloat garea = 2.0;\nfloat diff = ( depth1 - depth2 ) * 100.0;\nif ( diff < gDisplace ) {\ngarea = diffArea;\n} else {\nfar = 1;\n}\nfloat dd = diff - gDisplace;\nfloat gauss = pow( EULER, -2.0 * dd * dd / ( garea * garea ) );\nreturn gauss;\n}\nfloat calcAO( float depth, float dw, float dh ) {\nfloat dd = radius - depth * radius;\nvec2 vv = vec2( dw, dh );\nvec2 coord1 = vUv + dd * vv;\nvec2 coord2 = vUv - dd * vv;\nfloat temp1 = 0.0;\nfloat temp2 = 0.0;\nint far = 0;\ntemp1 = compareDepths( depth, readDepth( coord1 ), far );\nif ( far > 0 ) {\ntemp2 = compareDepths( readDepth( coord2 ), depth, far );\ntemp1 += ( 1.0 - temp1 ) * temp2;\n}\nreturn temp1;\n}\nvoid main() {\nvec2 noise = rand( vUv );\nfloat depth = readDepth( vUv );\nfloat tt = clamp( depth, aoClamp, 1.0 );\nfloat w = ( 1.0 / width )  / tt + ( noise.x * ( 1.0 - noise.x ) );\nfloat h = ( 1.0 / height ) / tt + ( noise.y * ( 1.0 - noise.y ) );\nfloat pw;\nfloat ph;\nfloat ao = 0.0;\nfloat dz = 1.0 / float( samples );\nfloat z = 1.0 - dz / 2.0;\nfloat l = 0.0;\nfor ( int i = 0; i <= samples; i ++ ) {\nfloat r = sqrt( 1.0 - z );\npw = cos( l ) * r;\nph = sin( l ) * r;\nao += calcAO( depth, pw * w, ph * h );\nz = z - dz;\nl = l + DL;\n}\nao /= float( samples );\nao = 1.0 - ao;\nif ( fogEnabled ) {\nao = mix( ao, 1.0, doFog() );\n}\nvec3 color = texture2D( tDiffuse, vUv ).rgb;\nvec3 lumcoeff = vec3( 0.299, 0.587, 0.114 );\nfloat lum = dot( color.rgb, lumcoeff );\nvec3 luminance = vec3( lum );\nvec3 final = vec3( color * mix( vec3( ao ), vec3( 1.0 ), luminance * lumInfluence ) );\nif ( onlyAO ) {\nfinal = onlyAOColor * vec3( mix( vec3( ao ), vec3( 1.0 ), luminance * lumInfluence ) );\n}\ngl_FragColor = vec4( final, 1.0 );\n}',
+        `uniform float cameraNear;
+        uniform float cameraFar;
+        uniform float fogNear;
+        uniform float fogFar;
+        uniform bool fogEnabled;
+        uniform bool onlyAO;
+        uniform vec2 size;
+        uniform float aoClamp;
+        uniform float lumInfluence;
+        uniform sampler2D tDiffuse;
+        uniform sampler2D tDepth;
+        varying vec2 vUv;
+        #define DL 2.399963229728653
+        #define EULER 2.718281828459045
+
+        #ifndef SAMPLES
+        #define SAMPLES 8
+        #endif
+        #ifndef RADIUS
+        #define RADIUS 5.0
+        #endif
+        #if !defined( FLOAT_DEPTH ) && !defined( RGBA_DEPTH )
+        #define RGBA_DEPTH
+        #endif
+        #ifndef ONLY_AO_COLOR
+        #define ONLY_AO_COLOR 1.0, 1.0, 1.0
+        #endif
+        const int samples = SAMPLES;
+        const float radius = RADIUS;
+        const bool useNoise = false;
+        const float noiseAmount = 0.0003;
+        const float diffArea = 0.4;
+        const float gDisplace = 0.4;
+        const vec3 onlyAOColor = vec3( ONLY_AO_COLOR );
+        float unpackDepth( const in vec4 rgba_depth ) {
+            float depth = 0.0;
+            #if defined( RGBA_DEPTH )
+            const vec4 bit_shift = vec4( 1.0 / ( 256.0 * 256.0 * 256.0 ), 1.0 / ( 256.0 * 256.0 ), 1.0 / 256.0, 1.0 );
+            depth = dot( rgba_depth, bit_shift );
+            #elif defined( FLOAT_DEPTH )
+            depth = rgba_depth.w;
+            #endif
+            return depth;
+        }
+        vec2 rand( const vec2 coord ) {
+            vec2 noise;
+            if ( useNoise ) {
+            float nx = dot ( coord, vec2( 12.9898, 78.233 ) );
+            float ny = dot ( coord, vec2( 12.9898, 78.233 ) * 2.0 );
+            noise = clamp( fract ( 43758.5453 * sin( vec2( nx, ny ) ) ), 0.0, 1.0 );
+        } else {
+            float width = size.x;
+            float height = size.y;
+
+
+            float ff = fract( 1.0 - coord.s * ( width / 2.0 ) );
+            float gg = fract( coord.t * ( height / 2.0 ) );
+            noise = vec2( 0.25, 0.75 ) * vec2( ff ) + vec2( 0.75, 0.25 ) * gg;
+        }
+        return ( noise * 2.0  - 1.0 ) * noiseAmount;
+    }
+        float doFog() {
+            float cameraFarMinusNear = cameraFar - cameraNear;
+
+            float zdepth = unpackDepth( texture2D( tDepth, vUv ) );
+            float depth = -cameraFar * cameraNear / ( zdepth * cameraFarMinusNear - cameraFar );
+            return smoothstep( fogNear, fogFar, depth );
+        }
+        float readDepth( const in vec2 coord ) {
+            float cameraFarPlusNear = cameraFar + cameraNear;
+            float cameraFarMinusNear = cameraFar - cameraNear;
+            float cameraCoef = 2.0 * cameraNear;
+
+
+            return cameraCoef / ( cameraFarPlusNear - unpackDepth( texture2D( tDepth, coord ) ) * cameraFarMinusNear );
+        }
+        float compareDepths( const in float depth1, const in float depth2, inout int far ) {
+            float garea = 2.0;
+            float diff = ( depth1 - depth2 ) * 100.0;
+            if ( diff < gDisplace ) {
+            garea = diffArea;
+        } else {
+            far = 1;
+        }
+        float dd = diff - gDisplace;
+        float gauss = pow( EULER, -2.0 * dd * dd / ( garea * garea ) );
+        return gauss;
+    }
+        float calcAO( float depth, float dw, float dh ) {
+            float dd = radius - depth * radius;
+            vec2 vv = vec2( dw, dh );
+            vec2 coord1 = vUv + dd * vv;
+            vec2 coord2 = vUv - dd * vv;
+            float temp1 = 0.0;
+            float temp2 = 0.0;
+            int far = 0;
+            temp1 = compareDepths( depth, readDepth( coord1 ), far );
+            if ( far > 0 ) {
+            temp2 = compareDepths( readDepth( coord2 ), depth, far );
+            temp1 += ( 1.0 - temp1 ) * temp2;
+        }
+        return temp1;
+    }
+        void main() {
+            float width = size.x;
+            float height = size.y;
+
+
+            vec2 noise = rand( vUv );
+            float depth = readDepth( vUv );
+            float tt = clamp( depth, aoClamp, 1.0 );
+            float w = ( 1.0 / width )  / tt + ( noise.x * ( 1.0 - noise.x ) );
+            float h = ( 1.0 / height ) / tt + ( noise.y * ( 1.0 - noise.y ) );
+            float pw;
+            float ph;
+            float ao = 0.0;
+            float dz = 1.0 / float( samples );
+            float z = 1.0 - dz / 2.0;
+            float l = 0.0;
+            for ( int i = 0; i <= samples; i ++ ) {
+            float r = sqrt( 1.0 - z );
+            pw = cos( l ) * r;
+            ph = sin( l ) * r;
+            ao += calcAO( depth, pw * w, ph * h );
+            z = z - dz;
+            l = l + DL;
+        }
+        ao /= float( samples );
+        ao = 1.0 - ao;
+        if ( fogEnabled ) {
+            ao = mix( ao, 1.0, doFog() );
+        }
+        vec3 color = texture2D( tDiffuse, vUv ).rgb;
+        vec3 lumcoeff = vec3( 0.299, 0.587, 0.114 );
+        float lum = dot( color.rgb, lumcoeff );
+        vec3 luminance = vec3( lum );
+        vec3 final = vec3( color * mix( vec3( ao ), vec3( 1.0 ), luminance * lumInfluence ) );
+        if ( onlyAO ) {
+            final = onlyAOColor * vec3( mix( vec3( ao ), vec3( 1.0 ), luminance * lumInfluence ) );
+        }
+        gl_FragColor = vec4( final, 1.0 );
+    }`,
 }
 
 const EventDispatcher = function () {
