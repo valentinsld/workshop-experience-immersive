@@ -1,6 +1,14 @@
 // This scene aims to contain everything related to home screen, in case we want to add some deco models
 
-import { Object3D, Group, Mesh, AmbientLight, PlaneBufferGeometry, MeshLambertMaterial } from 'three'
+import {
+    Object3D,
+    Group,
+    Mesh,
+    DirectionalLight,
+    PlaneBufferGeometry,
+    PlaneGeometry,
+    MeshLambertMaterial,
+} from 'three'
 
 import gsap from 'gsap'
 import SplitText from '../../SplitText'
@@ -44,56 +52,95 @@ export default class Scene0 {
         // init camera
         this.camera = App.camera.camera
         this.cameraContainer = App.camera.container
-        this.cameraContainer.position.set(0, 0, 10)
-        this.camera.position.set(0, 0, 0)
 
         // Ambient light
-        this.ambienteLight = new AmbientLight(0xffffff, .5)
-        this.container.add(this.ambienteLight)
+        // this.ambienteLight = new AmbientLight(0xffffff, .5)
+        // this.container.add(this.ambienteLight)
+        const light = new DirectionalLight(0xffffff, 0.5)
+        light.position.set(-1, 0, 1)
+        this.container.add(light)
 
         this.createSmoke()
     }
 
     createSmoke() {
         const smokeContainer = new Group()
-        const smokeGeo = new PlaneBufferGeometry(25, 25)
+        // const smokeGeo = new PlaneBufferGeometry(100, 100)
 
-        const smokeMaterial1 = new MeshLambertMaterial({
-            map: this.assets.textures.smoke3,
-            opacity: 0.2,
+        // const smokeMaterial1 = new MeshLambertMaterial({
+        //     map: this.assets.textures.smoke3,
+        //     opacity: 1,
+        //     transparent: true,
+        // })
+
+        // const smokeMaterial2 = new MeshLambertMaterial({
+        //     map: this.assets.textures.smoke3,
+        //     opacity: 0,
+        //     transparent: true,
+        // })
+
+        // for (let i = 0; i < 50; i++) {
+        //     const particle = new Mesh(
+        //         smokeGeo,
+        //         i % 2 === 0 ? smokeMaterial1 : smokeMaterial2
+        //     )
+        //     particle.position.set(
+        //         (Math.random() - 0.5) * 30,
+        //         (Math.random() - 0.5) * 1,
+        //         (Math.random() - 0.5) * 4
+        //     )
+        //     particle.rotation.z = Math.random() * 360
+        //     smokeContainer.add(particle)
+        // }
+
+        // this.time.on('tick', () => {
+        //     smokeContainer.children.forEach((child) => {
+        //         const z = child.rotation.z
+        //         child.lookAt(this.camera.position)
+        //         child.rotation.z = z + 0.008
+        //     })
+        // })
+
+        // smokeContainer.position.set(0, -5, -2)
+        // this.container.add(smokeContainer)
+
+        const material = new MeshLambertMaterial({
+            color: 0xffffff,
+            depthWrite: false,
+            map: this.assets.textures.smoke4,
             transparent: true,
+            opacity: .5,
         })
+        const geometry = new PlaneGeometry(5, 5)
+        this.particles = []
 
-        const smokeMaterial2 = new MeshLambertMaterial({
-            map: this.assets.textures.smoke3,
-            opacity: 0.2,
-            transparent: true,
-        })
+        const size = 5
 
-        for (let i = 0; i < 50; i++) {
-            const particle = new Mesh(
-                smokeGeo,
-                i % 2 === 0 ? smokeMaterial1 : smokeMaterial2
-            )
+        for (let i = 0; i < 40; i++) {
+            const particle = new Mesh(geometry, material)
+            particle.material.opacity = 0.2
             particle.position.set(
-                (Math.random() - 0.5) * 30,
-                (Math.random() - 0.5) * 1,
-                (Math.random() - 0.5) * 4
+                i/10,
+                (Math.random() - 0.5) * 2,
+                (Math.random() - 0.5) * 2
             )
-            particle.rotation.z = Math.random() * 360
+            particle.rotation.z = Math.random() * Math.PI * 2
+
             smokeContainer.add(particle)
+            this.particles.push(particle)
         }
 
+        this.container.add(smokeContainer)
+        smokeContainer.position.set(-.6, -2, -2.7)
+        smokeContainer.rotation.y = -0.380
+
         this.time.on('tick', () => {
-            smokeContainer.children.forEach((child) => {
-                const z = child.rotation.z
-                child.lookAt(this.camera.position)
-                child.rotation.z = z + 0.008
+            this.particles.forEach((particle) => {
+                const z = particle.rotation.z
+                particle.lookAt(this.camera.position)
+                particle.rotation.z = z + 0.004
             })
         })
-
-        smokeContainer.position.set(0, -5, -2)
-        this.container.add(smokeContainer)
     }
 
     animationOpen() {
