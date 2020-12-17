@@ -15,6 +15,7 @@ import {
     Group,
     Fog,
     Quaternion,
+    AudioLoader,
 } from 'three'
 import { DecalGeometry } from 'three/examples/jsm/geometries/DecalGeometry'
 
@@ -56,7 +57,7 @@ export default class Scene1 {
 
       const link = document.querySelector('.introScene__link')
       link.addEventListener('click', () => {
-        console.log('click')
+          this.addSound()
           gsap.to(introScene, {
               opacity: 0,
               duration: .45,
@@ -292,6 +293,16 @@ export default class Scene1 {
 
         smokeContainer.position.set(0, 10, -5)
         this.container.add(smokeContainer)
+    }
+
+    addSound() {
+      const audioLoader = new AudioLoader();
+      audioLoader.load( './sounds/metro.mp3', function( buffer ) {
+        App.sound.setBuffer( buffer );
+        App.sound.setLoop( true );
+        App.sound.setVolume( 0.4 );
+        App.sound.play();
+      });
     }
 
     goToStairs = (beforeCall) => {

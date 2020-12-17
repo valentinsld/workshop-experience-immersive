@@ -1,4 +1,4 @@
-import { Scene, WebGLRenderer, Color } from 'three'
+import { Scene, WebGLRenderer, Color, AudioListener, Audio, AudioLoader } from 'three'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { SSAOPass } from 'three/examples/jsm/postprocessing/SSAOPass.js';
 
@@ -29,6 +29,7 @@ export default class App {
     this.setRenderer()
     this.setCamera()
     this.setWorld()
+    this.setSound()
   }
   setCursor() {
     this.cursor = new Cursor({ id: "#cursorS", speed: 0.15 });
@@ -87,7 +88,23 @@ export default class App {
     ssaoPass.minDistance = 0.0025
     ssaoPass.maxDistance = 0.1
     this.composer.addPass( ssaoPass );
+  }
+  setSound() {
+    const listener = new AudioListener();
+    this.camera.container.add( listener );
 
+    // create a global audio source
+    this.sound = new Audio( listener );
+
+    // load a sound and set it as the Audio object's buffer
+    const audioLoader = new AudioLoader();
+    const THAT = this
+    audioLoader.load( './sounds/AmbientMusic.mp3', function( buffer ) {
+      THAT.sound.setBuffer( buffer );
+      THAT.sound.setLoop( true );
+      THAT.sound.setVolume( 0.4 );
+      THAT.sound.play();
+    });
   }
   setWorld() {
     // Create world instance
