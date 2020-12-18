@@ -390,7 +390,7 @@ export default class Scene1 {
       this.cameraInstance.baseRotation.x = 0.4
       gsap.to(this.camera.position, {
         x: -0.5,
-        duration: 0.8,
+        duration: 1.2,
         onComplete: () => this.cameraInstance.baseRotation.x = 0
       })
     }
@@ -399,7 +399,7 @@ export default class Scene1 {
       this.cameraInstance.baseRotation.x = -0.4
       gsap.to(this.camera.position, {
         x: 4.5,
-        duration: 0.8,
+        duration: 1.2,
         onComplete: () => this.cameraInstance.baseRotation.x = 0
       })
     }
@@ -408,11 +408,15 @@ export default class Scene1 {
       QTE.removeQuestion()
       gsap.to(this.camera.position, {
         x: 1.5,
-        duration: 0.8,
-        onComplete: () => {
+        duration: 1.4,
+        delay: 0.35,
+        ease: "Power3.out",
+        onStart: () => {
           this.cameraInstance.baseRotation.x = 0
           this.cameraInstance.baseRotation.y = 0
           this.lockCamera()
+        },
+        onComplete: () => {
           this.endScene(this.state.hasWalkedOver)
         }
       })
@@ -448,7 +452,7 @@ export default class Scene1 {
               duration: 1.2,
             })
   
-        let tl = gsap.timeline().play(-.8)
+        let tl = gsap.timeline()/*.play(-.8)*/
   
         for (let i = 0; i < nbStairs; i++) {
             const mult = i % 2 == 0 ? -1 : 1
