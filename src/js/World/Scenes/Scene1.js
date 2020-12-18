@@ -17,6 +17,7 @@ import {
     Quaternion,
     AudioLoader,
     Color,
+    PositionalAudio
 } from 'three'
 import { DecalGeometry } from 'three/examples/jsm/geometries/DecalGeometry'
 
@@ -302,13 +303,20 @@ export default class Scene1 {
     }
 
     addSound() {
+      // create the PositionalAudio object (passing in the listener)
+      this.sound = new PositionalAudio( App.listener );
+
+      // load a sound and set it as the Audio object's buffer
       const audioLoader = new AudioLoader();
+      const THAT = this
       audioLoader.load( './sounds/metro.mp3', function( buffer ) {
-        App.sound.setBuffer( buffer );
-        App.sound.setLoop( true );
-        App.sound.setVolume( 0.4 );
-        App.sound.play();
+        THAT.sound.setBuffer( buffer );
+        THAT.sound.setLoop( true );
+        THAT.sound.setVolume( 0.4 );
+        THAT.sound.play();
       });
+
+      App.globalSound.setVolume(0.2)
     }
 
     goToStairs = (beforeCall) => {
@@ -396,7 +404,7 @@ export default class Scene1 {
       this.cameraInstance.baseRotation.x = 0.4
       gsap.to(this.camera.position, {
         x: -0.5,
-        duration: 0.8,
+        duration: 1.2,
         onComplete: () => this.cameraInstance.baseRotation.x = 0
       })
     }
@@ -405,7 +413,7 @@ export default class Scene1 {
       this.cameraInstance.baseRotation.x = -0.4
       gsap.to(this.camera.position, {
         x: 4.5,
-        duration: 0.8,
+        duration: 1.2,
         onComplete: () => this.cameraInstance.baseRotation.x = 0
       })
     }
@@ -414,11 +422,15 @@ export default class Scene1 {
       QTE.removeQuestion()
       gsap.to(this.camera.position, {
         x: 1.5,
-        duration: 0.8,
-        onComplete: () => {
+        duration: 1.4,
+        delay: 0.35,
+        ease: "Power3.out",
+        onStart: () => {
           this.cameraInstance.baseRotation.x = 0
           this.cameraInstance.baseRotation.y = 0
           this.lockCamera()
+        },
+        onComplete: () => {
           this.endScene(this.state.hasWalkedOver)
         }
       })
@@ -463,7 +475,7 @@ export default class Scene1 {
               duration: 1.2,
             })
   
-        let tl = gsap.timeline().play(-.8)
+        let tl = gsap.timeline()/*.play(-.8)*/
   
         for (let i = 0; i < nbStairs; i++) {
             const mult = i % 2 == 0 ? -1 : 1

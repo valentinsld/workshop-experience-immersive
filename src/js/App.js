@@ -90,20 +90,20 @@ export default class App {
     this.composer.addPass( ssaoPass );
   }
   setSound() {
-    const listener = new AudioListener();
-    this.camera.container.add( listener );
+    this.listener = new AudioListener();
+    this.camera.container.add( this.listener );
 
     // create a global audio source
-    this.sound = new Audio( listener );
+    this.globalSound = new Audio( this.listener );
 
     // load a sound and set it as the Audio object's buffer
     const audioLoader = new AudioLoader();
     const THAT = this
     audioLoader.load( './sounds/AmbientMusic.mp3', function( buffer ) {
-      THAT.sound.setBuffer( buffer );
-      THAT.sound.setLoop( true );
-      THAT.sound.setVolume( 0.4 );
-      THAT.sound.play();
+      THAT.globalSound.setBuffer( buffer );
+      THAT.globalSound.setLoop( true );
+      THAT.globalSound.setVolume( 0.4 );
+      THAT.globalSound.play();
     });
   }
   setWorld() {
