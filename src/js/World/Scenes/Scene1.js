@@ -18,6 +18,8 @@ import {
     Quaternion,
     Geometry,
     MeshBasicMaterial,
+    MeshFaceMaterial,
+    RepeatWrapping,
 } from 'three'
 import { DecalGeometry } from 'three/examples/jsm/geometries/DecalGeometry'
 
@@ -47,19 +49,9 @@ export default class Scene1 {
         
         this.regitserSceneActions()
 
-        this.stairs = this.assets.models['01_ERNEST_0002'].scene
+        this.stairs = this.assets.models['Ernest_1512H1251'].scene
 
         // uv duplication
-        // const sol = this.stairs.getObjectByName('Sol')
-        // const uv1Array = sol.geometry.getAttribute('uv').array
-        // sol.geometry.setAttribute( 'uv2', new BufferAttribute( uv1Array, 1, false ) )
-
-        // sol.material.aoMap = this.assets.textures.aomap
-        // // sol.material.map = this.assets.textures.colormap
-        // sol.material.needsUpdate = true;  
-        // this.debugFolder = this.debug.addFolder('Sol')
-        // this.debugFolder.open()
-        // this.debugFolder.add(sol.material, 'aoMapIntensity', 0, 1, 0.1).name('Intensité occlusion map')
 
         // const sol = this.stairs.getObjectByName('Sol')
         // const solMaterial = sol.children[0].material
@@ -172,12 +164,12 @@ export default class Scene1 {
         // this.assets.textures['affiches-alpha-revert'].offset = new Vector2(0.320, 1.061)
 
         const materials = [
-            cloneDeep(this.stairs.getObjectByName('Sol-Mat').material),
-          new MeshStandardMaterial({ 
-            map: colorTexture, 
-            transparent: true, 
-            // alphaMap: this.assets.textures['affiches-alpha-revert'] 
-          }),
+            cloneDeep(this.stairs.getObjectByName('barrière_Left').material),
+            new MeshStandardMaterial({ 
+              map: colorTexture, 
+              transparent: true, 
+              // alphaMap: this.assets.textures['affiches-alpha-revert'] 
+            }),
         ]
         
         stairs.geometry.clearGroups()
@@ -194,7 +186,100 @@ export default class Scene1 {
 
         this.createSmoke()
 
+        this.applySolTexture()
+
         App.scene.fog = new Fog(0x030B24, 1, 50)
+    }
+
+    applySolTexture() {
+      const sol = this.stairs.getObjectByName('Sol')
+
+      const textures = [
+        {
+          color: this.assets.textures.c4d['damaged_polish_concrete_03_basecolor'],
+          normal: this.assets.textures.c4d['damaged_polish_concrete_03_normal'],
+          ao: this.assets.textures.c4d['damaged_polish_concrete_03_ambientOcclusion'],
+          roughness: this.assets.textures.c4d['damaged_polish_concrete_03_roughness'],
+        },
+        {
+          normal: this.assets.textures.c4d['Subway_Tiles_002_normal'],
+          ao: this.assets.textures.c4d['Subway_Tiles_002_ambientOcclusion'],
+          roughness: this.assets.textures.c4d['Subway_Tiles_002_roughness'],
+          height: this.assets.textures.c4d['Subway_Tiles_002_height'],
+        },
+      ]
+
+      textures[1].normal.repeat.x = 16
+      textures[1].normal.repeat.y = 16
+      textures[1].ao.repeat.x = 1.44
+      textures[1].ao.repeat.y = 1.44
+      textures[1].ao.offset.x = 0.09
+      textures[1].ao.offset.y = -0.07
+      textures[1].roughness.repeat.x = 1
+      textures[1].height.repeat.x = 1
+      textures[1].roughness.repeat.y = 1
+      textures[1].height.repeat.y = 1
+      for (const textureSet of textures) {
+        for (const texture of Object.values(textureSet)) {
+          texture.wrapS = RepeatWrapping
+          texture.wrapT = RepeatWrapping
+        }
+      }
+
+      const materials = [
+        new MeshStandardMaterial({
+            normalMap: textures[1].normal,
+            aoMap: textures[1].ao,
+            roughnessMap: textures[1].roughness,
+            bumpMap: textures[1].height
+        }),
+        new MeshStandardMaterial({
+          map: textures[0].color,
+          aoMap: textures[0].ao,
+          roughnessMap: textures[0].roughness,
+          normalMap: textures[0].normal,
+      }),
+      //   new MeshStandardMaterial({
+      //     normalMap: textures[1].normal,
+      //     aoMap: textures[1].ao,
+      //     roughnessMap: textures[1].roughness,
+      //     bumpMap: textures[1].height
+      // })
+      ]
+
+      // const sol = this.stairs.getObjectByName('Sol')
+      const uv1Array = sol.geometry.getAttribute('uv').array
+      sol.geometry.setAttribute( 'uv2', new BufferAttribute( uv1Array, 1, false ) )
+
+      sol.material.aoMap = this.assets.textures.aomap
+      // sol.material.map = this.assets.textures.colormap
+      sol.material.needsUpdate = true;  
+      this.debugFolder = this.debug.addFolder('Sol')
+      this.debugFolder.open()
+      this.debugFolder.add(sol.material, 'aoMapIntensity', 0, 1, 0.1).name('Intensité occlusion map')
+
+
+      // sol.geometry.clearGroups()
+      // sol.geometry.addGroup(0, 1000, 0)
+      // sol.geometry.addGroup(0, 1000, 1)
+      // sol.geometry.addGroup(0, 1000, 2)
+
+      sol.geometry = new Geometry().fromBufferGeometry(sol.geometry)
+
+      sol.geometry.faces.forEach(function (face, i) {
+ 
+        if (i > 70) face.materialIndex = 0
+        else face.materialIndex = 1
+     
+    });
+
+      sol.material = new MeshFaceMaterial(materials)
+      new MeshStandardMaterial({
+          normalMap: textures[1].normal,
+          aoMap: textures[1].ao,
+          roughnessMap: textures[1].roughness,
+          bumpMap: textures[1].height
+      })
     }
 
     regitserSceneActions() {

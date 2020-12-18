@@ -94,17 +94,17 @@ export default class App {
 
     // postprocessing
     
-    this.composer.addPass( new RenderPass( this.scene, this.camera ) );
+    // this.composer.addPass( new RenderPass( this.scene, this.camera ) );
 
-    const depthTarget = new WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: NearestFilter, magFilter: NearestFilter, format: RGBAFormat } );
+    // const depthTarget = new WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: NearestFilter, magFilter: NearestFilter, format: RGBAFormat } );
     
-    var effect = new ShaderPass( SSAOShader );
-    effect.uniforms[ 'tDepth' ].value = depthTarget;
-    effect.uniforms[ 'size' ].value.set( window.innerWidth, window.innerHeight );
-    effect.uniforms[ 'cameraNear' ].value = camera.near;
-    effect.uniforms[ 'cameraFar' ].value = camera.far;
-    effect.renderToScreen = true;
-    composer.addPass( effect );
+    // var effect = new ShaderPass( SSAOShader );
+    // effect.uniforms[ 'tDepth' ].value = depthTarget;
+    // effect.uniforms[ 'size' ].value.set( window.innerWidth, window.innerHeight );
+    // effect.uniforms[ 'cameraNear' ].value = camera.near;
+    // effect.uniforms[ 'cameraFar' ].value = camera.far;
+    // effect.renderToScreen = true;
+    // composer.addPass( effect );
 
   }
   setWorld() {
