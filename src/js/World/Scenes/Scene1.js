@@ -16,6 +16,7 @@ import {
     Fog,
     Quaternion,
     AudioLoader,
+    PositionalAudio
 } from 'three'
 import { DecalGeometry } from 'three/examples/jsm/geometries/DecalGeometry'
 
@@ -296,13 +297,20 @@ export default class Scene1 {
     }
 
     addSound() {
+      // create the PositionalAudio object (passing in the listener)
+      this.sound = new PositionalAudio( App.listener );
+
+      // load a sound and set it as the Audio object's buffer
       const audioLoader = new AudioLoader();
+      const THAT = this
       audioLoader.load( './sounds/metro.mp3', function( buffer ) {
-        App.sound.setBuffer( buffer );
-        App.sound.setLoop( true );
-        App.sound.setVolume( 0.4 );
-        App.sound.play();
+        THAT.sound.setBuffer( buffer );
+        THAT.sound.setLoop( true );
+        THAT.sound.setVolume( 0.4 );
+        THAT.sound.play();
       });
+
+      App.globalSound.setVolume(0.2)
     }
 
     goToStairs = (beforeCall) => {
