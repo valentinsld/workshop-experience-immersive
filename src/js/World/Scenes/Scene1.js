@@ -16,6 +16,7 @@ import {
     Fog,
     Quaternion,
     AudioLoader,
+    Color,
 } from 'three'
 import { DecalGeometry } from 'three/examples/jsm/geometries/DecalGeometry'
 
@@ -204,27 +205,29 @@ export default class Scene1 {
 
         const stairs = this.stairs.getObjectByName('Escaliers_3')
 
-        const texture1 = cloneDeep(this.assets.textures['Texture-Pignopn'])
-        texture1.offset = new Vector2(0, -0.1)
-        texture1.repeat = new Vector2(2.04, 3.03)
-        const texture2 = cloneDeep(this.assets.textures['Texture-Pignopn'])
-        texture2.offset = new Vector2(-1.71, -1.07)
-        texture2.repeat = new Vector2(2.04, 3.03)
-        const texture3 = cloneDeep(this.assets.textures['Texture-Pignopn'])
-        texture3.offset = new Vector2(0, -1.95)
-        texture3.repeat = new Vector2(2.04, 3.03)
+        const texture1 = cloneDeep(this.assets.textures['affiche3'])
+        // texture1.offset = new Vector2(0, -0.1)
+        // texture1.repeat = new Vector2(2.04, 3.03)
+        // texture1.offset = new Vector2(0, -0.1)
+        texture1.repeat = new Vector2(0.75, 1)
+        // const texture2 = cloneDeep(this.assets.textures['Texture-Pignopn'])
+        // texture2.offset = new Vector2(-1.71, -1.07)
+        // texture2.repeat = new Vector2(2.04, 3.03)
+        // const texture3 = cloneDeep(this.assets.textures['Texture-Pignopn'])
+        // texture3.offset = new Vector2(0, -1.95)
+        // texture3.repeat = new Vector2(2.04, 3.03)
 
         const materials = [
             cloneDeep(this.stairs.getObjectByName('barrière_Left').material),
             new MeshStandardMaterial({ map: texture1, transparent: true }),
-            new MeshStandardMaterial({ map: texture2, transparent: true }),
-            new MeshStandardMaterial({ map: texture3, transparent: true }),
+            // new MeshStandardMaterial({ map: texture2, transparent: true }),
+            // new MeshStandardMaterial({ map: texture3, transparent: true }),
         ]
         stairs.geometry.clearGroups()
         stairs.geometry.addGroup(0, 1000, 0)
         stairs.geometry.addGroup(0, 1000, 1)
-        stairs.geometry.addGroup(0, 1000, 2)
-        stairs.geometry.addGroup(0, 1000, 3)
+        // stairs.geometry.addGroup(0, 1000, 2)
+        // stairs.geometry.addGroup(0, 1000, 3)
 
         stairs.material = materials
 
@@ -232,6 +235,9 @@ export default class Scene1 {
             child.matrixAutoUpdate = false
             child.updateMatrix()
         })
+
+        this.stairs.getObjectByName('Planmetro').material.emissive = new Color( 0x222222 )
+        this.stairs.getObjectByName('Planmetro').material.emissiveIntensity = 0.25
 
         this.createSmoke()
 
@@ -328,7 +334,7 @@ export default class Scene1 {
       this.cameraInstance.baseRotation.x = 0
 
       setTimeout(() => {
-        QTE.pause('À la sortie du métro parisien, vous vous trouvez face à un nombre impressionnant de gisants. \n <p><b>Que feriez- vous ?</b></p>')
+        QTE.pause('À la sortie du métro parisien, vous vous trouvez face à un nombre impressionnant de sérigraphie de gisants. \n <p><b>Que feriez- vous ?</b></p>')
         setTimeout(() => {
           this.createStairsChoice(5)
           QTE.unpause()
@@ -433,6 +439,15 @@ export default class Scene1 {
     }
 
     climbStairs(nbStairs) {
+      // sound
+      // const url = stepIndex % 2 === 0 ? './sounds/footstep1.mp3' : './sounds/footstep2.mp3'
+      const audio = new Audio('./sounds/4footsteps.mp3')
+      audio.playbackRate = 0.8
+      audio.volume = 0.3
+      setTimeout(() => {
+        audio.play()
+      }, 1000)
+
       return new Promise((resolve, reject) => {
         const EaseY = CustomEase.create(
           'custom',
